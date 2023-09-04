@@ -12,6 +12,7 @@ class OrtoTile {
 	private _position: any
 	private _style: any
 	private group: any;
+	
 
 	constructor( vertices: Array<number>, position: any, tileSize: number, frameSize?: number, angle?: number, style?: any ) {
 
