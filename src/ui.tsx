@@ -11,7 +11,7 @@ import ModelSelectionModal from './components/modals/modelSelectionModal';
 import PeanoConsole from './components/consoles/peanoConsole';
 import HilbertConsole from './components/consoles/hilbertConsole';
 
-import { reset, init, generate, regenerate, draw } from './main';
+import { reset, initModel, generate, regenerate, draw } from './main';
 
 
 const peanoParamSchema: Param[] = [
@@ -28,13 +28,13 @@ const peanoParamSchema: Param[] = [
 
 const hilbertParamsSchema: Param[] = [
 
-	{ id: 'ogp1', name: 'iterationsNum', value: 3, range: [1, 5], step: 1, label: "P1", },
+	{ id: 'ogp1', name: 'iterationsNum', value: 5, range: [1, 5], step: 1, label: "P1", },
 	{ id: 'ogp2', name: 'empty', value: 0.5, range: [0, 2], step: 0.01, label: "P2", },
-	{ id: 'ogp3', name: '', value: 1, range: [0, 2], step: 1, label: "Olga P3", },
-	{ id: 'ogp4', name: '', value: 0.5, range: [0, 2], step: 1, label: "Olga P4", },
-	{ id: 'ogp5', name: '', value: 1, range: [0, 2], step: 1, label: "Olga P5", },
-	{ id: 'ogp6', name: '', value: 1, range: [0, 2], step: 1, label: "Olga P6", },
-	{ id: 'ogp7', name: '', value: 1, range: [0, 2], step: 1, label: "Olga P7", },
+	{ id: 'ogp3', name: 'empty', value: 1, range: [0, 2], step: 1, label: "Olga P3", },
+	{ id: 'ogp4', name: 'empty', value: 0.5, range: [0, 2], step: 1, label: "Olga P4", },
+	{ id: 'ogp5', name: 'empty', value: 1, range: [0, 2], step: 1, label: "Olga P5", },
+	{ id: 'ogp6', name: 'empty', value: 1, range: [0, 2], step: 1, label: "Olga P6", },
+	{ id: 'ogp7', name: 'empty', value: 1, range: [0, 2], step: 1, label: "Olga P7", },
 ];
 
 // -----------------------------------------------------------------------------------------------------------------
@@ -80,6 +80,17 @@ const UI = () => {
 		setIsDesktopOrLaptop(_isDesktopOrLaptop);
 
 	}, [ _isDesktopOrLaptop ] );
+
+
+	 useEffect(() => {
+
+    if (isPaperLoaded) {
+
+      reset();
+
+    }
+
+  }, [ isPaperLoaded ] );
 	
 
 	useEffect(() => { 
@@ -126,9 +137,8 @@ const UI = () => {
 			
 
 			reset();
-			init(selectedModel.option)
+			initModel(selectedModel.option)
 			generate(_modelParams);
-			draw(scaleCtrl, _modelParams);
 
 			setCurrentModel(selectedModel);
 			setParamsForModel(selectedModel.params);
@@ -240,7 +250,7 @@ const UI = () => {
 			    		<Button
 
 							labelText="new"
-							onClickEventHandler={ handleGenerateAction }
+							onClickEventHandler={ () => setInModelSelectionScreen(true) }
 						/>
 					)
 		    	}

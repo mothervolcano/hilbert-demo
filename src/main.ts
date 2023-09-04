@@ -2,10 +2,26 @@ import { Layer } from 'paper';
 import { paperScope } from './components/paperStage';
 
 
+import { IAlphabet, ICommand, IComposer, IModel } from './lib/lsys/lsys';
+
+import Alphabet from './lib/lsys/core/alphabet';
+import Composer from './lib/lsys/core/composer';
+
+
+import TestModel from './fass-modules/models/testModel';
+import Turtle from './lib/lsys/tools/turtle';
+
+
 let view: any
 let layer: any
 let origin: any
 
+let FASS: any;
+let model: IModel;
+let alphabet: IAlphabet;
+let composer: IComposer;
+let sequence: ICommand[];
+let pen: any;
 
 
 export function reset() {
@@ -21,7 +37,7 @@ export function reset() {
 
 // Note: initializes the requested model and creates a state and or context that is used by the other methods: generate, regenerate and redraw;
 
-export function init(
+export function initModel(
   
   selectedModel: string
 
@@ -29,17 +45,39 @@ export function init(
   
   origin = view.center;
 
+  alphabet = new Alphabet();
+
+  alphabet.registerGlyph( 'Rule', 'L' );
+  alphabet.registerGlyph( 'Rule', 'R' );
+  alphabet.registerGlyph( 'Rule', 'F' );
+  alphabet.registerGlyph( 'Instruction', '+' );
+  alphabet.registerGlyph( 'Instruction', '-' );
+
   switch( selectedModel ) {
 
     case 'PEANO': 
 
+      model = new TestModel( alphabet, "L");
       break;
 
     case 'HILBERT':
       
+      model = new TestModel( alphabet, "L");
       break;
-
   }
+
+  composer = new Composer( model );
+
+  pen = new Turtle();
+
+  pen.style = {
+
+    strokeColor: 'black',
+    strokeWidth: 2
+  }
+
+  pen.init( origin.x, origin.y, -90 );
+
 };
 
 
@@ -53,9 +91,15 @@ export function generate(
 
   const { iterationsNum } = params;
 
-  console.log(`GENERATING HILBERT CURVE`);
+  console.log(`GENERATING FASS CURVE`);
 
-  origin = view.center;
+  composer.reset()
+
+  const thread = composer.compose( iterationsNum );
+  
+  console.log(`----> Sequence: ${ thread }`);
+
+  sequence = composer.plot();
 
 };
 
@@ -70,6 +114,14 @@ export function draw(
   ) {
 
     const { } = params;
+
+    for ( const command of sequence ) {
+
+      command.run( pen );
+    }
+
+
+  layer.position = origin;
 
 }
 
