@@ -74,7 +74,6 @@ export type Glyph = Rule | Instruction | Marker;
 
 export interface IAlphabet {
 
-  new (): IAlphabet;
   registerGlyph( type: GlyphType, entry: string ): void;
   glyph( symbol: string ): Glyph;
   rule( symbol: string ): Rule;
@@ -96,15 +95,10 @@ export interface IAlphabet {
 
 export interface IModel {
 
-  new ( alphabet: IAlphabet, axiom: string ): IModel;
-  protected commands: Map<string, ICommand>;
-  protected productions: Map<string, IProduction>;
   readonly alphabet: IAlphabet;
   readonly axiom: string;
-  addProduction( production: IProduction ): void;
   hasProduction( symbol: string ): boolean;
   getProduction( symbol: string, context?: any ): IProduction | undefined;
-  addCommand( command: ICommand ): void;
   hasCommand( symbol: string ): boolean;
   getCommand( symbol: string, context?: any ): ICommand | undefined;
 
@@ -126,7 +120,6 @@ export interface IModel {
 
 export interface IComposer {
 
-  new ( model: IModel ): IComposer;
   compose( iterations: number, context?: any ): string;
   plot(): Array<ICommand>;
   reset(): void;
@@ -144,12 +137,11 @@ export interface IComposer {
 
 export interface IProduction {
 
-  new ( glyph: Rule, sequence?: Glyp[] ): IProduction;
   readonly glyph: Glyph;
   readonly output: string;
   write( params?: Array<number>, context?: any ): boolean;
   process( params: Array<number>, context?: any ): void;
-  encode( sequence: Array<Glyph>, context?: any ): string;
+  encode( sequence: Array<Glyph> ): string;
   read( context?: any ): string;
 
 }
@@ -165,7 +157,6 @@ export interface IProduction {
 
 export interface ICommand {
 
-  new ( symbol: string, action: Function ): ICommand;
   readonly symbol: string;
   run( tool: any, context?: any ): void;
 
