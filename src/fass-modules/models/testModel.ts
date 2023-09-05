@@ -28,9 +28,9 @@ class testModel extends Model {
 		super(alphabet, axiom);
 
 		// const L: IProduction = new tileRule(alphabet.rule('L'), alphabet.sequence('+RF-LFL-FR+')); 
-		const L: IProduction = new tileRule(alphabet.rule('L'), alphabet.sequence('+-RLF') ).compose('+RF-LFL-FR+'); 
+		const L: IProduction = new tileRule(alphabet.rule('L'), alphabet.collect('+-RLF') ).compose('+RF-LFL-FR+'); 
 		// const R: IProduction = new tileRule(alphabet.rule('R'), alphabet.sequence('-LF+RFR+FL-')); 
-		const R: IProduction = new tileRule(alphabet.rule('R'), alphabet.sequence('+-RLF')).compose('-LF+RFR+FL-'); 
+		const R: IProduction = new tileRule(alphabet.rule('R'), alphabet.collect('+-RLF')).compose('-LF+RFR+FL-'); 
 		// const F: IProduction = new tileRule(alphabet.rule('F')); 
 
 		this.addProduction(L);

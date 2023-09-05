@@ -77,7 +77,7 @@ export interface IAlphabet {
   registerGlyph( type: GlyphType, entry: string ): void;
   glyph( symbol: string ): Glyph;
   rule( symbol: string ): Rule;
-  sequence( symbols: string ): Glyph[]
+  collect( symbols: string ): Glyph[]
 
 }
 
