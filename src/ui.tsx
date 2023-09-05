@@ -28,7 +28,7 @@ const peanoParamSchema: Param[] = [
 
 const hilbertParamsSchema: Param[] = [
 
-	{ id: 'ogp1', name: 'iterationsNum', value: 5, range: [1, 5], step: 1, label: "P1", },
+	{ id: 'ogp1', name: 'iterationsNum', value: 8, range: [1, 5], step: 1, label: "P1", },
 	{ id: 'ogp2', name: 'empty', value: 0.5, range: [0, 2], step: 0.01, label: "P2", },
 	{ id: 'ogp3', name: 'empty', value: 1, range: [0, 2], step: 1, label: "Olga P3", },
 	{ id: 'ogp4', name: 'empty', value: 0.5, range: [0, 2], step: 1, label: "Olga P4", },

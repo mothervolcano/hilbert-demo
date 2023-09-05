@@ -30,7 +30,7 @@ abstract class Production implements IProduction {
 
 	encode( sequence: Array<Glyph> ): string {
 
-		const _str = sequence.map( (g:Glyph) => {
+		const _str = sequence.map( (g) => {
 
 			return g.symbol;
 
@@ -40,27 +40,26 @@ abstract class Production implements IProduction {
 	};
 
 
-	abstract process( params: Array<number> ): void;
+	abstract process( params?: Array<number>, context?:any ): void;
 
 
-	write( params?: Array<number>, context?: any ): boolean {
+	read( params?: string, context?: any ) {
 
-		if ( params ) {
+		if ( params && context === 'parameter?' ) {
 
-			let paramIndex = 0;
+			if ( params === '(') { return true }
+			else { return false }
 
-			this.process( params );
+		} else if ( params ) {
 
-			return true;
+			const _params = params.split(',').map( (p) => Number.parseFloat(p) );
 
-		} else {
-
-			return false;
+			this.process( _params );
 		}
 	};
 
 
-	read( context?: any ): string {
+	write( context?: any ): string {
 
 		return this._output;
 	};

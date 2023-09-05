@@ -101,6 +101,7 @@ export interface IModel {
   getProduction( symbol: string, context?: any ): IProduction | undefined;
   hasCommand( symbol: string ): boolean;
   getCommand( symbol: string, context?: any ): ICommand | undefined;
+  read( symbol: string ): IProduction | string;
 
 }
 
@@ -121,7 +122,7 @@ export interface IModel {
 export interface IComposer {
 
   compose( iterations: number, context?: any ): string;
-  plot(): Array<ICommand>;
+  plot(): Generator<ICommand, void, unknown>;
   reset(): void;
 
 }
@@ -139,10 +140,10 @@ export interface IProduction {
 
   readonly glyph: Glyph;
   readonly output: string;
-  write( params?: Array<number>, context?: any ): boolean;
+  read( params?: string | null, context?: any ): boolean | void;
   process( params: Array<number>, context?: any ): void;
   encode( sequence: Array<Glyph> ): string;
-  read( context?: any ): string;
+  write( context?: any ): string;
 
 }
 

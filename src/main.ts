@@ -20,7 +20,7 @@ let FASS: any;
 let model: IModel;
 let alphabet: IAlphabet;
 let composer: IComposer;
-let sequence: ICommand[];
+let sequence: Generator<ICommand, void, unknown>;
 let pen: any;
 
 

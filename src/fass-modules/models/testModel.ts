@@ -37,7 +37,7 @@ class testModel extends Model {
 		// -------------------------------------------------
 
 		this.scale = 1;
-		this.distance = 10*this.scale;
+		this.distance = 5*this.scale;
 
 		this.lengthCtrl1 = 1;
 		this.lengthCtrl2 = 1;

@@ -3,6 +3,8 @@ import { IModel, ICommand, IComposer } from '../lsys';
 
 import { getParameterString, parseParameters } from '../tools/parserAssistant';
 
+import { EmptyStringException, IncompleteParameterStringException, NoParametersFoundException } from './errorMessages';
+
 
 
 
@@ -34,9 +36,59 @@ class Composer implements IComposer {
 	};
 
 
+	private next( skip?: number ) {
+
+		if ( !skip ) {
+
+			this.currentIndex++;
+
+		} else {
+
+			this.currentIndex = Math.min( this.currentIndex + skip, this.thread.length );
+		}
+	}
+
+
 	private append(str: string) {
 
 		this.thread += str;
+	};
+
+	
+	private extractParameters( str: string ) {
+
+		try {
+
+			const paramString = getParameterString( str );
+			return paramString;
+
+		} catch ( error ) {
+
+			if (error instanceof IncompleteParameterStringException) {
+
+		      // Handle incomplete string, maybe allow for retries or log for debugging
+
+				return '';
+
+		    } else if (error instanceof EmptyStringException) {
+
+		      // Handle empty string, maybe fail gracefully or log the error
+
+		    	return '';
+
+		    } else if (error instanceof NoParametersFoundException) {
+
+		      // Handle when no parameters are found
+
+		    	return '';
+
+		    } else {
+
+		      // Unhandled error
+		      throw new Error(`Failed to parse parameters in string: ${str}`);
+    		}
+
+		}
 	};
 
 
@@ -48,7 +100,7 @@ class Composer implements IComposer {
 
 		for (let i = 0; i < iterations; i++) {
 
-			let _thread = "";
+			let nextThread: string[] = [];
 
 			this.currentIndex = 0;
 
@@ -56,55 +108,32 @@ class Composer implements IComposer {
 
 				this.shift();
 
-				const currChar = this.thread.charAt(this.currentIndex);
+				const currChar = this.thread.charAt( this.currentIndex );
+				const nextChar = this.thread.charAt( this.currentIndex + 1 )
 
-				const glyph = this.model.alphabet.glyph(currChar);
+				const product = this.model.read( currChar );
 
-				// ...............................................................
-				// REWRITING REQUIRED
+				if ( typeof product === 'string' ) {
 
-				if ( glyph.type === 'Rule' ) {
+					nextThread.push(product);
 
-					const production = this.model.getProduction(currChar);
+				} else { 
 
-					if ( production !== undefined ) {
-
-						const paramString = getParameterString(this.strip);
-
-						if (paramString === 'incomplete') {
-
-							// TODO: handle this case
-
-						} else if (paramString !== null) {
-
-							const params = parseParameters(paramString);
-
-							if (!production.write(params)) {
-
-								// TODO: handle the case when the production fails to process the parameters.
-							}
-
-						} else {
-
-							// TODO: handle this case
-						}
-
-						_thread += production.read();
+					if ( product.read( nextChar, 'parameter?' ) ) {
 						
-					} else {
+						const paramString = this.extractParameters( this.strip );
 
-						throw new Error(`Model has no Production defined for Rule ${glyph.symbol}`);
+						if ( paramString ) {
+							
+							product.read( paramString );
+							this.next( paramString.length );
+						}
 					}
 
-				// .............................................................
-				// REWRITING NOT REQUIRED
-		
-				} else {
-
-					_thread += currChar;
+					nextThread.push(product.write());
 				}
 
-				this.currentIndex++;
+				this.next();
 
 				if (this.currentIndex >= this.thread.length) {
 
@@ -112,10 +141,9 @@ class Composer implements IComposer {
 
 					break;
 				}
-
 			}
 
-			this.thread = _thread;
+			this.thread = nextThread.join('');
 
 
 			// console.log(`---> ${ _thread }`)
@@ -127,33 +155,36 @@ class Composer implements IComposer {
 	}
 
 
-	public plot() {
+	public *plot() {
 
-		const sequence: ICommand[] = [];
 
 		for (let i = 0; i < this.thread.length; i++) {
 
 			const currChar = this.thread.charAt(i);
 			const glyph = this.model.alphabet.glyph(currChar);
 
+			let command: ICommand | undefined;
+
 			switch( glyph.type ) {
 
 				case 'Rule':
 
-					if ( this.model.hasCommand( glyph.symbol ) ) {
-
-						sequence.push( this.model.getCommand( glyph.symbol )! );
-					}
+					command = this.model.hasCommand(glyph.symbol) ? this.model.getCommand(glyph.symbol) : undefined;
+        			
+        			if (command) {
+          				yield command;
+       				 }
 
 					break;
 
 				case 'Instruction':
 
-					if ( this.model.hasCommand( glyph.symbol ) ) {
-
-						sequence.push( this.model.getCommand( glyph.symbol )! );
-					}
-
+					command = this.model.hasCommand(glyph.symbol) ? this.model.getCommand(glyph.symbol) : undefined;
+       				
+       				if (command) {
+          				yield command;
+       				}
+        			
 					break;
 
 				case 'Marker':
@@ -165,8 +196,6 @@ class Composer implements IComposer {
 				default : throw new Error(`Failed to execute. Probably invalid Glyph ${ currChar }`)
 			}
 		}
-
-		return sequence;
 	}
 
 	public reset() {

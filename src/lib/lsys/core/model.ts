@@ -125,6 +125,20 @@ abstract class Model implements IModel {
 		}
 	}
 
+	public read( symbol: string ) {
+
+		const glyph = this.alphabet.glyph(symbol);
+
+		if ( glyph.type === 'Rule' && this.hasProduction( symbol ) ) {
+
+			return this.getProduction( symbol )!;
+
+		} else {
+
+			return symbol;
+		}
+	}
+
 }
 
 export default Model;

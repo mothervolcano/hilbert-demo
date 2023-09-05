@@ -17,34 +17,51 @@ export function getParametersLength( str: string ): number {
 };
 
 
-export function getParameterString( str: string ): string | 'incomplete' | null {
+class GenericStringException extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'GenericStringException';
+  }
+}
 
-	if ( typeof str === 'undefined' || str === '' ) {
-    	
-    	throw new Error('Empty or undefined string');
-  	}
+class EmptyStringException extends GenericStringException {
+  constructor(message: string) {
+    super(message);
+    this.name = 'EmptyStringException';
+  }
+}
 
-  	const openingIndex = str.indexOf('(');
-  	const closingIndex = str.indexOf(')');
+class DelimiterException extends GenericStringException {
+  constructor(message: string) {
+    super(message);
+    this.name = 'DelimiterException';
+  }
+}
 
-	if ( openingIndex >= 0 && closingIndex > 0 ) {
+export function getParameterString(
+  str: string,
+  openingChar: string = '(',
+  closingChar: string = ')'
+): string | null {
+  if (typeof str === 'undefined' || str === '') {
+    throw new EmptyStringException('Empty or undefined string');
+  }
 
-		// TODO: handle the case when we have nothing in between parenthesis eg.: "()"
+  const openingIndex = str.indexOf(openingChar);
+  const closingIndex = str.indexOf(closingChar);
 
-		return str.substring( openingIndex + 1, closingIndex );
+  if (openingIndex >= 0 && closingIndex > 0) {
+    if (closingIndex - openingIndex === 1) {
+      throw new DelimiterException('No parameters in between delimiters');
+    }
+    return str.substring(openingIndex + 1, closingIndex);
+  } else if (closingIndex === -1 && openingIndex >= 0) {
+    throw new DelimiterException('Incomplete parameter string; closing delimiter missing');
+  } else {
+    throw new DelimiterException(`No opening or closing delimiters found`);
+  }
+}
 
-	} else if ( closingIndex === -1 ) {
-
-		// TODO: return an informative error message to give the chance to the caller to try again with a longer string as the input
-
-		return 'incomplete';
-
-	} else {
-
-		return null
-	}
-
-};
 
 
 export function renderSequence( sequence: string ) {
