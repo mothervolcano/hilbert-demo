@@ -140,6 +140,7 @@ export interface IProduction {
 
   readonly glyph: Glyph;
   readonly output: string;
+  rule: Glyph[];
   read( params?: string | null, context?: any ): boolean | void;
   process( params: Array<number>, context?: any ): void;
   encode( sequence: Array<Glyph> ): string;

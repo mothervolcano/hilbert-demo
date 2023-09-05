@@ -10,15 +10,15 @@ import { EmptyStringException, IncompleteParameterStringException, NoParametersF
 
 class Composer implements IComposer {
 
-	private thread: string;
-	private strip: string;
+	private thread: Array<string>;
+	private strip: Array<string>;
 	private window: number;
 	private currentIndex: number;
 
 	constructor(private model: IModel) {
 
-		this.thread = "";
-		this.strip = "";
+		this.thread = [];
+		this.strip = [];
 		this.window = 10;
 		this.currentIndex = 0;
 
@@ -32,7 +32,8 @@ class Composer implements IComposer {
 
 		const end = Math.min(_start + _length, this.thread.length);
 
-		this.strip = this.thread.substring(_start, end);
+		// this.strip = this.thread.substring(_start, end);
+		this.strip = this.thread.slice(_start, end);
 	};
 
 
@@ -51,7 +52,8 @@ class Composer implements IComposer {
 
 	private append(str: string) {
 
-		this.thread += str;
+		// this.thread += str;
+		this.thread.push(str);
 	};
 
 	
@@ -108,8 +110,10 @@ class Composer implements IComposer {
 
 				this.shift();
 
-				const currChar = this.thread.charAt( this.currentIndex );
-				const nextChar = this.thread.charAt( this.currentIndex + 1 )
+				// const currChar = this.thread.charAt( this.currentIndex );
+				// const nextChar = this.thread.charAt( this.currentIndex + 1 )				
+				const currChar = this.thread[ this.currentIndex ];
+				const nextChar = this.thread[ this.currentIndex + 1];
 
 				const product = this.model.read( currChar );
 
@@ -121,7 +125,8 @@ class Composer implements IComposer {
 
 					if ( product.read( nextChar, 'parameter?' ) ) {
 						
-						const paramString = this.extractParameters( this.strip );
+						const paramString = this.extractParameters( '' );
+						// const paramString = this.extractParameters( this.strip.join('') );
 
 						if ( paramString ) {
 							
@@ -130,7 +135,7 @@ class Composer implements IComposer {
 						}
 					}
 
-					nextThread.push(product.write());
+					nextThread.push(...product.write().split(''));
 				}
 
 				this.next();
@@ -143,7 +148,7 @@ class Composer implements IComposer {
 				}
 			}
 
-			this.thread = nextThread.join('');
+			this.thread = nextThread;
 
 
 			// console.log(`---> ${ _thread }`)
@@ -151,7 +156,7 @@ class Composer implements IComposer {
 
 		}
 
-		return this.thread;
+		return this.thread.join('');
 	}
 
 
@@ -160,7 +165,8 @@ class Composer implements IComposer {
 
 		for (let i = 0; i < this.thread.length; i++) {
 
-			const currChar = this.thread.charAt(i);
+			// const currChar = this.thread.charAt(i);
+			const currChar = this.thread[i];
 			const glyph = this.model.alphabet.glyph(currChar);
 
 			let command: ICommand | undefined;
@@ -200,7 +206,7 @@ class Composer implements IComposer {
 
 	public reset() {
 
-		this.thread = '';
+		this.thread = [];
 		this.currentIndex = 0;
 	}
 }

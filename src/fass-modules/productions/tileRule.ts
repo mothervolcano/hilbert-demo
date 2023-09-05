@@ -5,12 +5,22 @@ import Production from "../../lib/lsys/core/production";
 
 class TileRule extends Production {
 
-	constructor( head: Rule, sequence?: Glyph[] ) {
+	constructor( glyph: Rule, dialect?: Glyph[] ) {
 
-		super( head, sequence || [ head ] );
+		super( glyph, dialect );
+	}
+
+
+	compose( str: string ) {
+
+		this._rule = this.decode( str );
+		this._output = this.encode( this._rule );
+
+		return this;
 	}
 
 	process() {
+
 
 	}
 
