@@ -26,10 +26,15 @@ let pen: any;
 
 export function reset() {
 
-  paperScope.project.clear();
+  // paperScope.project.clear();
 
-  view = paperScope.project.view
-  layer = new Layer();
+  // if ( layer ) { layer.removeChildren(); }
+
+  // view = paperScope.project.view;
+  // origin = view.center;
+  // layer = new Layer();
+
+  // if ( !layer ) { layer = new Layer(); } else { layer.removeChildren(); }
 
   // TODO: check if there's anything that needs to be cleared in both the model and sequencer
 }
@@ -42,8 +47,13 @@ export function initModel(
   selectedModel: string
 
 ) {
+
+  paperScope.project.clear();
   
+  view = paperScope.project.view;
   origin = view.center;
+
+  layer = new Layer();
 
   alphabet = new Alphabet();
 
@@ -73,7 +83,7 @@ export function initModel(
   pen.style = {
 
     strokeColor: 'black',
-    strokeWidth: 2
+    strokeWidth: 2,
   }
 
   pen.init( origin.x, origin.y, -90 );
@@ -91,13 +101,13 @@ export function generate(
 
   const { iterationsNum } = params;
 
-  console.log(`GENERATING FASS CURVE`);
+  console.log(`GENERATING FASS CURVE with ${iterationsNum} iterations`);
 
   composer.reset()
 
   const thread = composer.compose( iterationsNum );
   
-  console.log(`----> Sequence: ${ thread }`);
+  // console.log(`----> Sequence: ${ thread }`);
 
   sequence = composer.plot();
 
@@ -115,14 +125,15 @@ export function draw(
 
     const { } = params;
 
+    pen.reset();
+    pen.init( origin.x, origin.y, -90 );
+
     for ( const command of sequence ) {
 
       command.run( pen );
     }
 
-
-  layer.position = origin;
-
+    layer.position = origin;
 }
 
 

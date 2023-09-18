@@ -95,27 +95,21 @@ const UI = () => {
 
 	useEffect(() => { 
 
-		if (isPaperLoaded) {
+		if ( isPaperLoaded && currentModel !== null ) {
 
 			const _modelParams: any = {};
 
-			if (currentModel === null) {
+			Array.from(currentModel.params.values()).forEach((p: any) => {
 
-				// TODO: error message
+				_modelParams[p.name] = p.value;
+			});
 
-			} else {
+			console.log(`USE EFFECT: reset() + draw()`)
 
-				Array.from(currentModel.params.values()).forEach((p: any) => {
-
-					_modelParams[p.name] = p.value;
-				});
-
-				reset();
-				draw(scaleCtrl, _modelParams);
-			}
+			draw(scaleCtrl, _modelParams);
 		}
 
-	}, [ currentModel, paramsForModel ] );
+	}, [ paramsForModel ] );
 
 
 
@@ -135,8 +129,8 @@ const UI = () => {
 
 			});
 			
+			console.log(`GENERATE HANDLER: reset() + initModel() + generate()`)
 
-			reset();
 			initModel(selectedModel.option)
 			generate(_modelParams);
 

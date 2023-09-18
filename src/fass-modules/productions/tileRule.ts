@@ -8,6 +8,7 @@ class TileRule extends Production {
 	constructor( glyph: Rule, dialect?: Glyph[] ) {
 
 		super( glyph, dialect );
+
 	}
 
 

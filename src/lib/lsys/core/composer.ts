@@ -125,8 +125,8 @@ class Composer implements IComposer {
 
 					if ( product.read( nextChar, 'parameter?' ) ) {
 						
-						const paramString = this.extractParameters( '' );
-						// const paramString = this.extractParameters( this.strip.join('') );
+						// const paramString = this.extractParameters( '' );
+						const paramString = this.extractParameters( this.strip.join('') );
 
 						if ( paramString ) {
 							
