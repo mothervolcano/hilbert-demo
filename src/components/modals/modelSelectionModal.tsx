@@ -1,7 +1,8 @@
 import { useState } from 'react';
 
 import TileGridMenu from "../ui/tileGridMenu";
-import Button from '../ui/button';
+// import Button from '../ui/button';
+import { Button } from '@mantine/core';
 
 interface Props {
 
@@ -45,10 +46,10 @@ const ModelSelectionModal = ( props: Props ) => {
 				initialized && (
 
 			    	<div className="absolute top-0 right-0 m-2">
-				    	<Button 
+{/*				    	<Button 
 				    		labelText="close"
 				    		onClickEventHandler={onClose}
-				    	/>
+				    	/>*/}
 			    	</div>
 		    	)
 		    }
@@ -59,11 +60,13 @@ const ModelSelectionModal = ( props: Props ) => {
 				onSelect={handleSelectionInput}
 			/>
 
-			<Button	
+			<Button>Generate</Button>
+
+{/*			<Button	
 						
 				labelText="Generate"
 				onClickEventHandler={ handleGenerateAction }
-			/>
+			/>*/}
 			
 		</div>
 

@@ -1,20 +1,17 @@
-import { Layer } from 'paper';
-import { paperScope } from './components/paperStage';
+import { Layer } from "paper";
+import { paperScope } from "./components/paperStage";
 
+import { IAlphabet, ICommand, IComposer, IModel } from "./lib/lsys/lsys";
 
-import { IAlphabet, ICommand, IComposer, IModel } from './lib/lsys/lsys';
+import Alphabet from "./lib/lsys/core/alphabet";
+import Composer from "./lib/lsys/core/composer";
 
-import Alphabet from './lib/lsys/core/alphabet';
-import Composer from './lib/lsys/core/composer';
+import TestModel from "./fass-modules/models/testModel";
+import Turtle from "./lib/lsys/tools/turtle";
 
-
-import TestModel from './fass-modules/models/testModel';
-import Turtle from './lib/lsys/tools/turtle';
-
-
-let view: any
-let layer: any
-let origin: any
+let view: any;
+let layer: any;
+let origin: any;
 
 let FASS: any;
 let model: IModel;
@@ -23,33 +20,21 @@ let composer: IComposer;
 let sequence: Generator<ICommand, void, unknown>;
 let pen: any;
 
-
 export function reset() {
-
   // paperScope.project.clear();
-
   // if ( layer ) { layer.removeChildren(); }
-
   // view = paperScope.project.view;
   // origin = view.center;
   // layer = new Layer();
-
   // if ( !layer ) { layer = new Layer(); } else { layer.removeChildren(); }
-
   // TODO: check if there's anything that needs to be cleared in both the model and sequencer
 }
 
-
 // Note: initializes the requested model and creates a state and or context that is used by the other methods: generate, regenerate and redraw;
 
-export function initModel(
-  
-  selectedModel: string
-
-) {
-
+export function initModel(selectedModel: string) {
   paperScope.project.clear();
-  
+
   view = paperScope.project.view;
   origin = view.center;
 
@@ -57,101 +42,69 @@ export function initModel(
 
   alphabet = new Alphabet();
 
-  alphabet.registerGlyph( 'Rule', 'L' );
-  alphabet.registerGlyph( 'Rule', 'R' );
-  alphabet.registerGlyph( 'Rule', 'F' );
-  alphabet.registerGlyph( 'Instruction', '+' );
-  alphabet.registerGlyph( 'Instruction', '-' );
+  alphabet.registerGlyph("Rule", "L");
+  alphabet.registerGlyph("Rule", "R");
+  alphabet.registerGlyph("Rule", "F");
+  alphabet.registerGlyph("Instruction", "+");
+  alphabet.registerGlyph("Instruction", "-");
 
-  switch( selectedModel ) {
-
-    case 'PEANO': 
-
-      model = new TestModel( alphabet, "L");
+  switch (selectedModel) {
+    case "PEANO":
+      model = new TestModel(alphabet, "L");
       break;
 
-    case 'HILBERT':
-      
-      model = new TestModel( alphabet, "L");
+    case "HILBERT":
+      model = new TestModel(alphabet, "L");
       break;
   }
 
-  composer = new Composer( model );
+  composer = new Composer(model);
 
   pen = new Turtle();
 
   pen.style = {
-
-    strokeColor: 'black',
+    strokeColor: "black",
     strokeWidth: 2,
-  }
+  };
 
-  pen.init( origin.x, origin.y, -90 );
-
-};
-
+  pen.init(origin.x, origin.y, -90);
+}
 
 // Note: generates a model based on a different implementation that requires specific modules, parameters and configuration
 
-export function generate(
-
-  params: any
-
-) {
-
+export function generate(params: any) {
   const { iterationsNum } = params;
 
   console.log(`GENERATING FASS CURVE with ${iterationsNum} iterations`);
 
-  composer.reset()
+  composer.reset();
 
-  const thread = composer.compose( iterationsNum );
-  
+  const thread = composer.compose(iterationsNum);
+
   // console.log(`----> Sequence: ${ thread }`);
 
   sequence = composer.plot();
-
-};
-
+}
 
 // Note: modifies the model based on user or external input;
 
-export function draw(
+export function draw(scaleCtrl: number, params: any) {
+  const {} = params;
 
-    scaleCtrl: number,
-    params: any
+  pen.reset();
+  pen.init(origin.x, origin.y, -90);
 
-  ) {
+  for (const command of sequence) {
+    command.run(pen);
+  }
 
-    const { } = params;
-
-    pen.reset();
-    pen.init( origin.x, origin.y, -90 );
-
-    for ( const command of sequence ) {
-
-      command.run( pen );
-    }
-
-    layer.position = origin;
+  layer.position = origin;
 }
-
 
 // Note: regenerates the model that is currently selected with different initial parameters or configuration and updates the stage.
 
-export function regenerate(
+export function regenerate(params: any) {
+  const { iterationsNum } = params;
 
-    params: any
-
-  ) {
-
-      const { iterationsNum } = params;
-
-      console.log(`REGENERATING FASS CURVE... (to be implemented) }`);
-
-
+  console.log(`REGENERATING FASS CURVE... (to be implemented) }`);
 }
-
-
-
-
