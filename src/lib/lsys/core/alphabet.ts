@@ -1,31 +1,16 @@
 
-import { IAlphabet, GlyphType, Glyph, Rule, Instruction, Marker } from '../lsys';
+import { GlyphType, Glyph, Rule, Instruction, Parameter, Marker, IModel } from '../lsys';
 
 
-/**
- * The Alphabet class manages all the symbols used in the L-system.
- * It ensures that the symbols are uniquely registered and validates them upon retrieval.
- */
+class Alphabet {
 
-class Alphabet implements IAlphabet {
-
-		
-	// Holds the mapping of symbols to their respective Glyph objects.
 	private dictionary: Map<string, Glyph>;
-
-	
-	/**
-	 * Initializes an empty dictionary for Glyph storage.
-	 */
 
 	constructor() {
 
 		this.dictionary = new Map();
-	}
+	};
 
-	/**
-	 * Validates if a symbol can be safely retrieved from the dictionary.
-	 */
 
 	private validateRetrieval( symbol: string ): string {
 
@@ -39,9 +24,6 @@ class Alphabet implements IAlphabet {
 		}
 	};
 
-	/**
-	 * Validates if a symbol can be safely added to the dictionary.
-	 */
 
 	private validateEntry( symbol: string ): string {
 
@@ -56,17 +38,12 @@ class Alphabet implements IAlphabet {
 	};
 
 
-	/**
-	 * Registers a new Glyph in the dictionary.
-	 * The 'entry' argument can either be a single symbol or a string of symbols.
-	 */
-
-	public registerGlyph( type: GlyphType, entry: string ) { // entry can be a single character eg. 'A' or a series of characters to be split into separate entries 'A+FB'
+	public register( type: GlyphType, symbol_: string ) { // symbol_ can be a single character eg. 'A' or a series of characters to be split into separate entries 'A+FB'
 
 		
 		let glyph: Glyph;
 
-		for ( const char of entry ) {
+		for ( const char of symbol_ ) {
 
 			const symbol: string = char;
 
@@ -99,38 +76,64 @@ class Alphabet implements IAlphabet {
 		}
 	};
 
-	/**
-	 * Retrieves a single Glyph object associated with the provided symbol.
-	 */
 
-	public glyph( symbol: string ): Glyph {
+	public registerRules( symbol_: string ) {
 
-		if ( symbol.length === 1 ) {
+		for ( const char of symbol_ ) {
 
-			const _glyph = this.dictionary.get( this.validateRetrieval(symbol.charAt(0)) )!;
+			const _marker: Rule = { type: 'Rule', symbol: char, params: [] };
 
-			return _glyph;
-
-		} else if ( symbol.length > 1) {
-
-			throw new Error(`Invalid input ${symbol}. If you meant to retrieve a series of Glyphs use composePhrase instead`);
-
-		} else {
-
-			throw new Error(`Invalid input ${symbol}`);
+			this.dictionary.set( this.validateEntry(char), _marker );
 		}
 	};
 
-	/**
-	 * Retrieves a single Rule object associated with the provided symbol.
-	 * Throws an error if the symbol does not represent a Rule.
-	 */
 
-	public rule( symbol: string ): Rule {
+	public registerInstructions( symbol_: string ) {
 
-		if ( symbol.length === 1 ) {
+		for ( const char of symbol_ ) {
 
-			const _glyph = this.dictionary.get( this.validateRetrieval(symbol.charAt(0)) )!;
+			const _marker: Instruction = { type: 'Instruction', symbol: char };
+
+			this.dictionary.set( this.validateEntry(char), _marker );
+		}
+	};
+
+
+	public registerMarkers( symbol_: string ) {
+
+		for ( const char of symbol_ ) {
+
+			const _marker: Marker = { type: 'Marker', symbol: char };
+
+			this.dictionary.set( this.validateEntry(char), _marker );
+		}
+	};
+
+
+	public glyph( str: string ): Glyph {
+
+		if ( str.length === 1 ) {
+
+			const _glyph = this.dictionary.get( this.validateRetrieval(str.charAt(0)) )!;
+
+			return _glyph;
+
+		} else if ( str.length > 1) {
+
+			throw new Error(`Invalid input ${str}. If you meant to retrieve a series of Glyphs use composePhrase instead`);
+
+		} else {
+
+			throw new Error(`Invalid input ${str}`);
+		}
+	};
+
+
+	public rule( str: string ): Rule {
+
+		if ( str.length === 1 ) {
+
+			const _glyph = this.dictionary.get( this.validateRetrieval(str.charAt(0)) )!;
 
 			if ( _glyph.type === 'Rule' ) {
 
@@ -138,31 +141,27 @@ class Alphabet implements IAlphabet {
 
 			} else {
 
-				throw new Error(`Requested symbol ${symbol} is not a Glyph Rule`);
+				throw new Error(`Requested symbol ${str} is not a Glyph Rule`);
 			}
 
-		} else if ( symbol.length > 1) {
+		} else if ( str.length > 1) {
 
-			throw new Error(`Invalid input ${symbol}. If you meant to retrieve a series of Glyphs use composePhrase instead`);
+			throw new Error(`Invalid input ${str}. If you meant to retrieve a series of Glyphs use composePhrase instead`);
 
 		} else {
 
-			throw new Error(`Invalid input ${symbol}`);
+			throw new Error(`Invalid input ${str}`);
 		}
 	};
 
 
-	/**
-	 * Retrieves a sequence of Glyph objects associated with the provided string of symbols.
-	 */
+	public compose( str: string ): Glyph[] {
 
-	public collect( symbols: string ): Glyph[] {
-
-		if ( symbols.length > 1 ) {
+		if ( str.length > 1 ) {
 
 			const sequence: Glyph[] = [];
 
-			for ( const char of symbols ) {
+			for ( const char of str ) {
 
 				const _glyph = this.dictionary.get( this.validateRetrieval(char) )!;
 
@@ -170,15 +169,15 @@ class Alphabet implements IAlphabet {
 			}
 
 			if ( sequence.length > 0 ) { return sequence }
-			else { throw new Error(`Failed to retrieve entry(ies) for ${symbols}`) };
+			else { throw new Error(`Failed to retrieve entry(ies) for ${str}`) };
 
-		} else if ( symbols.length === 1 ) {
+		} else if ( str.length === 1 ) {
 
-			throw new Error(`Invalid input ${symbols}. If you mean to retrieve a single Glyph use retrieveGlyph instead`);
+			throw new Error(`Invalid input ${str}. If you mean to retrieve a single Glyph use retrieveGlyph instead`);
 
 		} else {
 
-			throw new Error(`Invalid input ${symbols}`);
+			throw new Error(`Invalid input ${str}`);
 		}
 	}
 
@@ -186,5 +185,4 @@ class Alphabet implements IAlphabet {
 
 
 export default Alphabet;
-
 

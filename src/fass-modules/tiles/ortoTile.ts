@@ -1,5 +1,6 @@
 import { Point, Path, Group } from 'paper';
 
+const DEBUG_MODE = false;
 
 class OrtoTile {
 
@@ -10,31 +11,22 @@ class OrtoTile {
 	private _tileSize: number
 	private _angle: number
 	private _position: any
-	private _style: any
 	private group: any;
-	
 
-	constructor( vertices: Array<number>, position: any, tileSize: number, frameSize?: number, angle?: number, style?: any ) {
+	constructor( vertices: Array<number>, position: any, tileSize: number, frameSize?: number, angle?: number ) {
 
 		this._position = position
 		this._angle = angle || 0
 		this._tileSize = tileSize
 		this._frameSize = frameSize || this._tileSize;
 
-		this._style = style || {
-
-			strokeColor: 'black',
-			strokeWidth: 1
-		}
-
-
 		this.tile = new Path.Rectangle({
 
 			point: [ this._position.x - this._tileSize/2, this._position.y - this._tileSize/2 ],
 			size: this._tileSize,
-			strokeColor: 'blue',
-			visible: false
-			// opacity: 0.25
+			strokeColor: 'cyan',
+			opacity: 0.25,
+			visible: DEBUG_MODE,
 		});
 
 		this.frame = new Path.Rectangle({
@@ -42,30 +34,24 @@ class OrtoTile {
 			point: [ this._position.x - this._frameSize/2, this._position.y - this._frameSize/2 ],
 			size: this._frameSize,
 			strokeColor: 'blue',
-			visible: false
-			// opacity: 0.50
+			opacity: 0.25,
+			visible: DEBUG_MODE,
 		})
 		
 		
 		this._polygon = new Path({
 
-			segments: [ this.frame.segments[ vertices[0] ].point, this.frame.segments[ vertices[1] ].point ]
+			segments: [ this.frame.segments[ vertices[0] ].point, this.frame.segments[ vertices[1] ].point ],
+			strokeColor: 'green',
+			strokeWidth: 2,
+			visible: DEBUG_MODE
 
 		});
 
-		this._polygon.style = this._style;
-
-
 		this.group = new Group( [ this.tile, this.frame, this._polygon] )
-		
-		// this.group.pivot = this._entryPoint;
-		// this.group.position = this._position;
-
-		// this._position = this._exitPoint;
 
 		this.group.pivot = this._polygon.firstSegment.point;
 		this.group.position = this._position;
-
 
 		if ( angle !== undefined ) {
 
@@ -78,24 +64,22 @@ class OrtoTile {
 		return this._polygon;
 	}
 
-	set style( input: any ) {
-
-    	this._style = input;
-  	}
-
-	get style(): void {
-
-	    return this._style;
-	}
-
 	public addSegment( idx: number, at?: number ) {
 
 		let pt;
 
-		if ( at ) {
+		if ( at !== undefined && at !== null ) {
 
-			const curve = this.frame.curves[idx];
-			pt = curve.getPointAt( curve.length * at );
+			if ( at === 0 ) {
+
+				pt = this.frame.bounds.center;
+
+			} else {
+
+				const curve = this.frame.curves[idx];
+				pt = curve.getPointAt( curve.length * at );
+			}
+
 
 		} else {
 
@@ -125,8 +109,13 @@ class OrtoTile {
 		return this._position;
 	}
 
+	set angle(value: number) {
 
-	public angle() {
+		this._angle = value;
+	}
+
+
+	get angle() {
 
 		return this._angle;
 	}

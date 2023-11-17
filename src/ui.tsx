@@ -1,304 +1,220 @@
-import { useMediaQuery } from "react-responsive";
-
 import { useState, useEffect } from "react";
 
 import { Model, Param, ParamSet } from "./fass";
 
-import Stage from "./components/stage";
-import Button from "./components/ui/button";
-import ModelSelectionModal from "./components/modals/modelSelectionModal";
-import PeanoConsole from "./components/consoles/peanoConsole";
-import HilbertConsole from "./components/consoles/hilbertConsole";
+import {
+	Container,
+	Flex,
+	Grid,
+	NumberInput,
+	SegmentedControl,
+	SegmentedControlItem,
+	Stack,
+	DEFAULT_THEME
+} from "@mantine/core";
 
-import { reset, initModel, generate, regenerate, draw } from "./main";
+// -----------------------------------------------------------
 
-const peanoParamSchema: Param[] = [
-	{
-		id: "mkp1",
-		name: "iterationsNum",
-		value: 3,
-		range: [1, 5],
-		step: 1,
-		label: "P1",
-	},
-	{ id: "mkp2", name: "empty", value: 3, range: [1, 10], step: 1, label: "P2" },
-	{
-		id: "mkp5",
-		name: "empty",
-		value: 1,
-		range: [1, 3],
-		step: 0.01,
-		label: "P3",
-	},
-	{
-		id: "mkp3",
-		name: "empty",
-		value: 1,
-		range: [0, 2],
-		step: 0.01,
-		label: "P4",
-	},
-	{
-		id: "mkp4",
-		name: "empty",
-		value: 15,
-		range: [0, 30],
-		step: 0.1,
-		label: "P5",
-	},
-	{
-		id: "mkp6",
-		name: "empty",
-		value: 1,
-		range: [0, 2],
-		step: 0.01,
-		label: "P6",
-	},
-	{
-		id: "mkp7",
-		name: "empty",
-		value: 1,
-		range: [0, 2],
-		step: 0.01,
-		label: "P7",
-	},
-];
+import useModel from "./hooks/useModel";
 
-const hilbertParamsSchema: Param[] = [
-	{
-		id: "ogp1",
-		name: "iterationsNum",
-		value: 6,
-		range: [1, 5],
-		step: 1,
-		label: "P1",
-	},
-	{
-		id: "ogp2",
-		name: "empty",
-		value: 0.5,
-		range: [0, 2],
-		step: 0.01,
-		label: "P2",
-	},
-	{
-		id: "ogp3",
-		name: "empty",
-		value: 1,
-		range: [0, 2],
-		step: 1,
-		label: "Olga P3",
-	},
-	{
-		id: "ogp4",
-		name: "empty",
-		value: 0.5,
-		range: [0, 2],
-		step: 1,
-		label: "Olga P4",
-	},
-	{
-		id: "ogp5",
-		name: "empty",
-		value: 1,
-		range: [0, 2],
-		step: 1,
-		label: "Olga P5",
-	},
-	{
-		id: "ogp6",
-		name: "empty",
-		value: 1,
-		range: [0, 2],
-		step: 1,
-		label: "Olga P6",
-	},
-	{
-		id: "ogp7",
-		name: "empty",
-		value: 1,
-		range: [0, 2],
-		step: 1,
-		label: "Olga P7",
-	},
-];
+import PaperStage from "./components/paperStage";
 
-// -----------------------------------------------------------------------------------------------------------------
+import {
+	reset,
+	initModel,
+	generate,
+	refresh,
+	redraw,
+	extractPath,
+} from "./main";
 
-const models: Model[] = [
-	{
-		option: "PEANO",
-		label: "Peano",
-		icon: "TEST",
-		console: PeanoConsole,
-		params: peanoParamSchema,
-		default: false,
-		checked: false,
-	},
-	{
-		option: "HILBERT",
-		label: "Hilbert",
-		icon: "TEST",
-		console: HilbertConsole,
-		params: hilbertParamsSchema,
-		default: false,
-		checked: false,
-	},
-];
+// --------------------------------------------------------------
+// TYPES
 
-const UI = () => {
-	// -------------------------------------------------------------------------------------------------------------
+interface ModelOption {
+	label: string;
+	value: Model;
+}
 
-	const [isDesktopOrLaptop, setIsDesktopOrLaptop] = useState(false);
-	const [isPaperLoaded, setIsPaperLoaded] = useState(false);
+// --------------------------------------------------------------
+// HELPERS
 
-	const [initialized, setInitialized] = useState(false);
+function parseParams(updatedParams: ParamSet) {
+	const modelParams: any = {};
 
-	const [inModelSelectionScreen, setInModelSelectionScreen] =
-		useState<boolean>(true);
-
-	const [currentModel, setCurrentModel] = useState<Model | null>(null);
-	const [paramsForModel, setParamsForModel] = useState<ParamSet | null>(null);
-
-	const [scaleCtrl, setScaleCtrl] = useState(3);
-
-	const _isDesktopOrLaptop = useMediaQuery({
-		query: "(min-width: 1224px)",
+	Array.from(updatedParams.values()).forEach((p: any) => {
+		modelParams[p.name] = p.value;
 	});
 
-	//-----------------------------------------------------------------------------
+	return modelParams;
+}
+
+
+const UI = () => {
+	const [isPaperLoaded, setIsPaperLoaded] = useState<boolean>(false);
+	const [initialized, setInitialized] = useState<boolean>(false);
+
+	const [models, currentModel, setCurrentModel] = useModel();
+	const [paramsForConsole, setParamsForConsole] = useState<ParamSet | null>(
+		null,
+	);
+	const [iterations, setIterations] = useState<number>(3);
+
+	// ----------------------------------------------------------------------------
+
+	const modelOptions: SegmentedControlItem[] = models.map((model) => {
+		return {
+			label: model.option,
+			value: model.option,
+		};
+	});
+
+	// ----------------------------------------------------------------------------
 	// HOOKS
 
-	useEffect(() => {
-		setIsDesktopOrLaptop(_isDesktopOrLaptop);
-	}, [_isDesktopOrLaptop]);
+	// .............................................................................
+	// ACTION: the app is loaded
 
 	useEffect(() => {
-		if (isPaperLoaded) {
-			reset();
+		if (!isPaperLoaded) {
+			console.log("PAPER HASN'T LOADED");
+			return () => {};
+		}
+		console.log("1 --> PAPERJS LOADED! CurrentModel: ", currentModel);
+		setParamsForConsole(currentModel.params);
+		reset();
+		initModel();
+
+		if (!initialized) {
+			setInitialized(true);
 		}
 	}, [isPaperLoaded]);
 
+	// .............................................................................
+	// ACTION: parameters are updated in the UI
+
 	useEffect(() => {
-		if (isPaperLoaded && currentModel !== null) {
-			const _modelParams: any = {};
-
-			Array.from(currentModel.params.values()).forEach((p: any) => {
-				_modelParams[p.name] = p.value;
-			});
-
-			console.log(`USE EFFECT: reset() + draw()`);
-
-			draw(scaleCtrl, _modelParams);
+		if (!isPaperLoaded) {
+			console.log("PAPER HASN'T LOADED");
+			return () => {};
 		}
-	}, [paramsForModel]);
 
-	//-----------------------------------------------------------------------------
+		if (currentModel === null) {
+			// it should check if it is initialized instead and not if there's a model
+			// TODO: error message
+		} else if (currentModel) {
+			const params: ParamSet = parseParams(currentModel.params);
+
+			console.log(`2 --> REDRAWING for params change: `, params);
+
+			refresh();
+			generate(currentModel.model, iterations, params);
+			redraw(params);
+		}
+	}, [paramsForConsole]);
+
+	// .............................................................................
+
+	useEffect(() => {
+		if (!isPaperLoaded) {
+			console.log("PAPER HASN'T LOADED");
+			return () => {};
+		}
+
+		console.log("2 --> REDRAWING for new selected Model");
+
+		const params: ParamSet = parseParams(currentModel.params);
+		refresh();
+		generate(currentModel.model, iterations, params);
+		redraw(params);
+	}, [currentModel]);
+
+	// .............................................................................
+
+	useEffect(() => {
+		if (!isPaperLoaded) {
+			console.log("PAPER HASN'T LOADED");
+			return () => {};
+		}
+
+		console.log(`2 --> REDRAWING for ${iterations} iterations`);
+
+		const params: ParamSet = parseParams(currentModel.params);
+		refresh();
+		generate(currentModel.model, iterations, params);
+		redraw(params);
+	}, [iterations]);
+
+	// ----------------------------------------------------------------------------
 	// HANDLERS
 
-	function handleGenerateAction(selectedModel: any) {
-		if (isPaperLoaded) {
-			const _modelParams: any = {};
-
-			Array.from(selectedModel?.params.values() || []).forEach((p: any) => {
-				_modelParams[p.name] = p.value;
-			});
-
-			console.log(`GENERATE HANDLER: reset() + initModel() + generate()`);
-
-			initModel(selectedModel.option);
-			generate(_modelParams);
-
-			setCurrentModel(selectedModel);
-			setParamsForModel(selectedModel.params);
-
-			setInModelSelectionScreen(false);
-
-			if (!initialized) {
-				setInitialized(true);
-			}
-		} else {
+	const handleIterationCtrlInput = (value: number | string) => {
+		if ( value > 0 ) {
+			setIterations(Number(value));
 		}
 	}
 
-	function handleRegenerateAction(selectedModel: any) {
-		if (isPaperLoaded && currentModel) {
-			console.log(`ready to regenerate ${selectedModel.label}`);
+	const handleParamCtrlInputForModel = (updatedParams: any) => {
+		setParamsForConsole(updatedParams);
+	};
 
-			const _modelParams: any = {};
-
-			Array.from(selectedModel?.params.values() || []).forEach((p: any) => {
-				_modelParams[p.name] = p.value;
-			});
-
-			reset();
-			regenerate(_modelParams);
-			draw(scaleCtrl, _modelParams);
-		} else {
-		}
-	}
-
-	function handleParamCtrlInputForModel(updatedParams: any) {
-		setParamsForModel(updatedParams);
-	}
+	const handleModelSelection = (value: string) => {
+		setCurrentModel({ type: value });
+		console.log(`selected: ${value}`, currentModel);
+	};
 
 	// -------------------------------------------------------------------------------------------------------
+	// AUX
 
-	function switchConsole(model: Model) {
+	const switchConsole = (model: Model) => {
 		const Console = model.console;
 
 		return (
 			<Console
-				params={paramsForModel}
+				params={paramsForConsole}
 				inputHandler={handleParamCtrlInputForModel}
 			/>
 		);
-	}
+	};
+
+	const frameMargin = 6;
+	const borderColor = DEFAULT_THEME.colors.dark[5];
 
 	return (
-		<div className={`relative w-3/4 h-[80vh] m-5 border border-slate-900`}>
-			<div className={`w-full h-full`}>
-				{isDesktopOrLaptop && <Stage onPaperLoad={setIsPaperLoaded} />}
-			</div>
-
-			<div className={`absolute top-0 left-0 w-full h-full`}>
-				{isDesktopOrLaptop && inModelSelectionScreen && (
-					<ModelSelectionModal
-						initialized={initialized}
-						options={models}
-						onGenerate={handleGenerateAction}
-						onClose={() => setInModelSelectionScreen(false)}
-					/>
-				)}
-			</div>
-
-			<div
-				className={`absolute ${isDesktopOrLaptop ? "top-0" : "top-0"} left-0 ${
-					isDesktopOrLaptop ? "max-w-[250px]" : "w-full"
-				} ${
-					isDesktopOrLaptop ? "h-fit" : "h-[70vh]"
-				} m-5 border border-slate-900`}
-			>
-				{currentModel && !inModelSelectionScreen && switchConsole(currentModel)}
-			</div>
-
-			<div className={`absolute top-0 right-0 m-2`}>
-				{!inModelSelectionScreen && (
-					<Button
-						labelText="new"
-						onClickEventHandler={() => setInModelSelectionScreen(true)}
-					/>
-				)}
-			</div>
-
-			<div className={`absolute bottom-0 right-0 m-2`}>
-				{!inModelSelectionScreen && currentModel && (
-					<Button
-						labelText="regenerate"
-						onClickEventHandler={handleRegenerateAction}
-					/>
-				)}
-			</div>
+		<div style={{position: "relative", width: "100%", height: "100vh", padding: `${frameMargin}vh`, border: "1px solid red",}}>
+			<div style={{border: `1px solid ${borderColor}`}}>
+				<Grid align="stretch">
+					<Grid.Col span={2} >
+							<Stack w={"100%"} p={15}>
+								<NumberInput 
+									label="iterations"
+									description="..."
+									allowNegative={false}
+									allowDecimal={false}
+									min={2}
+									max={6}
+									value={iterations}
+									onChange={handleIterationCtrlInput}
+								/>
+								{initialized && currentModel && switchConsole(currentModel)}
+							</Stack>
+					</Grid.Col>
+					<Grid.Col span={10} >
+						<div
+							style={{ position: "relative", height: `${100-frameMargin*2}vh`, borderLeft: `1px solid ${borderColor}`}}
+						>
+							<div style={{ position: "absolute", top: "15px", left: "15px" }}>
+								<SegmentedControl
+									value={currentModel.option}
+									onChange={handleModelSelection}
+									data={modelOptions}
+								/>
+							</div>
+							<PaperStage onPaperLoad={setIsPaperLoaded} />
+						</div>
+					</Grid.Col>
+				</Grid>
+				</div>
 		</div>
 	);
 };

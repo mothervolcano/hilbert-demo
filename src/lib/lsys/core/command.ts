@@ -1,8 +1,8 @@
-import { ICommand } from "../lsys";
 
 
 
-class Command implements ICommand {
+
+class Command {
 
 	private _symbol: string;
 	private _action: Function;

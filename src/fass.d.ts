@@ -1,31 +1,21 @@
-
-
-interface Param {
-			
-	id: string;
-	name: string;
-	value: number;
-	range: [number,number];
-	step: number;
-	label: string;
+export interface Param {
+  id: string;
+  name: string;
+  value: number;
+  range: [number, number];
+  step: number;
+  label: string;
 }
 
-type ParamSet = Array<Param>;
+export type ParamSet = Array<Param>;
 
-interface Model {
-
-	option: string;
-	icon: any;
-	label: string;
-	console: any;
-	params: Param[];
-	default: boolean;
-	checked: boolean;
-}
-
-export {
-
-	Param,
-	ParamSet,
-	Model
+export interface Model {
+  option: string;
+  label: string;
+  icon: any;
+  model: any;
+  console: any;
+  params: ParamSet;
+  default: boolean;
+  checked: boolean;
 }

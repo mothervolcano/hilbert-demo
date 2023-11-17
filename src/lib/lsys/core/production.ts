@@ -1,98 +1,88 @@
-import { IProduction, GlyphType, Glyph, Rule, Instruction, Marker, IModel } from '../lsys';
+import { GlyphType, Glyph, Rule, Instruction, Parameter, Marker, IModel } from '../lsys';
 
 
-abstract class Production implements IProduction {
+abstract class Production {
 
-	protected _glyph: Glyph;
-	protected dialect: Glyph[]; 
-	protected _rule: Glyph[];
-	protected _output: string;
+	protected _head: Glyph;
+	protected rule: Glyph[];
+	protected phrase: string;
 
 
-	constructor( glyph: Glyph, dialect?: Glyph[] ) {
+	constructor( head: Glyph, rule: Glyph[] ) {
 
-		this._glyph = glyph;
-		this.dialect = dialect || [];
+		this._head = head;
+		this.rule = rule;
 
-		this._rule = dialect ? [] : [ glyph ];
-		this._output = dialect ? '' : this.encode( [ glyph ] );
-
-		return this;
+		this.phrase = this.serialize( rule );
 	};
 
 
-	get rule() {
+	get head() {
 
-		return this._rule;
-	}
-
-	get glyph() {
-
-		return this._glyph;
-	}
-
-	get output() {
-
-		return this._output;
+		return this._head;
 	}
 
 
-	decode( str: string ): Glyph[] {
+	serialize( sequence: Array<Glyph> ): string {
 
-		const sequence = str.split('').map( (char) => { 
+		const _str = sequence.map( (g:Glyph) => {
 
-			const glyph = this.dialect.find( (g) => g.symbol === char );
+			if ( g.type !== 'Parameter' ) {
 
-			if ( glyph ) {
-
-				return glyph
-
-			} else {
-
-				throw new Error(`${char} it's not part of this production dialect`);
+				return g.symbol;
 			}
-		});
-
-		return sequence;
-	};
-
-
-	encode( sequence: Array<Glyph> ): string {
-
-		const _str = sequence.map( (g) => {
-
-			return g.symbol;
 
 		}).join('');
 
 		return _str;
 	};
 
-	abstract compose( str: string ): void;
-	abstract process( params?: Array<number>, context?:any ): void;
+
+	// requiresParameter(): boolean {
+
+	// 	if (this.head.type === 'Rule') {
+
+	// 		return this.head.params.length > 0 ? true : false;
+
+	// 	} else { return false }
+	// };
+
+	abstract process( params: Array<number> ): void;
 
 
-	read( params?: string, context?: any ) {
+	read( params?: Array<number>, context?: any ): boolean {
 
-		if ( params && context === 'parameter?' ) {
+		if ( params ) {
 
-			if ( params === '(') { return true }
-			else { return false }
+			let paramIndex = 0;
 
-		} else if ( params ) {
+			this.process( params );
 
-			const _params = params.split(',').map( (p) => Number.parseFloat(p) );
+			return true;
 
-			this.process( _params );
+		} else {
+
+			return false;
 		}
 	};
 
 
-	write( context?: any ): string {
+	rewrite( sequence: Array<any>,  context?: any ): string {
 
-		return this._output;
+		const _output = this.serialize( sequence );
+
+		// TODO: make one final verification to see if the output was well formed?
+
+		this.phrase = _output;
+
+		return this.phrase;
 	};
 
+
+	output( context?: any ): string {
+
+		return this.phrase;
+	}
 }
 
 export default Production;

@@ -15,22 +15,13 @@ class Turtle {
     this._angle = 0 ;
     this.penDown = true;
 
-    this._style = style || {
-
-      strokeColor: 'black',
-      strokeWidth: 1
-    }
+    this._style = style || {};
   }
 
   private createPath() {
 
-    const _path = new Path({
-
-        strokeColor: this._style.strokeColor,
-        strokeWidth: this._style.strokeWidth,
-        opacity: 1
-
-      });
+    const _path = new Path();
+    _path.style = this._style;
 
     return _path;
   }
