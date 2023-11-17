@@ -1,6 +1,5 @@
 import { Container, Text, Slider, Stack } from "@mantine/core";
-import sliderStyles from "./slider.module.css";
-import labelStyles from "./sliderLabel.module.css";
+import sliderStyles from "../../styles/slider.module.css";
 
 interface ConsoleProps {
 	params: any;
@@ -8,7 +7,8 @@ interface ConsoleProps {
 }
 
 const labelStyleProps = {
-	size: "sm",
+	size: "xs",
+	fw: "500",
 	c: "var(--mantine-color-dark-3)",
 };
 
@@ -37,7 +37,7 @@ const DefaultConsole = (props: ConsoleProps) => {
 
 	return (
 		<Stack gap={15}>
-			<Stack gap={2}>
+			<Stack gap={3}>
 				<StyledText>{params[0].label}</StyledText>
 				<Slider
 					id={params[0].id}

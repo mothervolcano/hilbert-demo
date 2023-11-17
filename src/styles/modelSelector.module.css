@@ -1,0 +1,20 @@
+.root {
+
+	background-color: transparent;
+}
+
+.control {
+
+}
+
+.control::before {
+	width: 0;
+}
+
+.indicator {
+}
+
+.label {
+	font-weight: 600;
+	padding: 0.21rem 0.75rem 0.22rem 0.75rem;
+}

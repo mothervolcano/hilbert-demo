@@ -1,3 +1,6 @@
+import modelSelectorStyles from "./styles/modelSelector.module.css";
+import sliderStyles from "./styles/slider.module.css";
+
 import { useState, useEffect } from "react";
 
 import { Model, Param, ParamSet } from "./fass";
@@ -10,7 +13,11 @@ import {
 	SegmentedControl,
 	SegmentedControlItem,
 	Stack,
-	DEFAULT_THEME
+	Title,
+	Text,
+	DEFAULT_THEME,
+	Space,
+	Slider,
 } from "@mantine/core";
 
 // -----------------------------------------------------------
@@ -48,7 +55,6 @@ function parseParams(updatedParams: ParamSet) {
 
 	return modelParams;
 }
-
 
 const UI = () => {
 	const [isPaperLoaded, setIsPaperLoaded] = useState<boolean>(false);
@@ -149,10 +155,10 @@ const UI = () => {
 	// HANDLERS
 
 	const handleIterationCtrlInput = (value: number | string) => {
-		if ( value > 0 ) {
+		if (value > 0) {
 			setIterations(Number(value));
 		}
-	}
+	};
 
 	const handleParamCtrlInputForModel = (updatedParams: any) => {
 		setParamsForConsole(updatedParams);
@@ -162,6 +168,8 @@ const UI = () => {
 		setCurrentModel({ type: value });
 		console.log(`selected: ${value}`, currentModel);
 	};
+
+	const handleSliderInput = (value: number, id: string) => {};
 
 	// -------------------------------------------------------------------------------------------------------
 	// AUX
@@ -178,43 +186,107 @@ const UI = () => {
 	};
 
 	const frameMargin = 6;
-	const borderColor = DEFAULT_THEME.colors.dark[5];
+	const dark = DEFAULT_THEME.colors.dark[5];
+	const softDark = DEFAULT_THEME.colors.dark[0];
+	const light = DEFAULT_THEME.colors.gray[0];
+	const softLight = DEFAULT_THEME.colors.gray[2];
+	const dim = DEFAULT_THEME.colors.gray[2];
 
 	return (
-		<div style={{position: "relative", width: "100%", height: "100vh", padding: `${frameMargin}vh`, border: "1px solid red",}}>
-			<div style={{border: `1px solid ${borderColor}`}}>
-				<Grid align="stretch">
-					<Grid.Col span={2} >
-							<Stack w={"100%"} p={15}>
-								<NumberInput 
-									label="iterations"
-									description="..."
-									allowNegative={false}
-									allowDecimal={false}
-									min={2}
-									max={6}
-									value={iterations}
-									onChange={handleIterationCtrlInput}
-								/>
-								{initialized && currentModel && switchConsole(currentModel)}
-							</Stack>
+		<div
+			style={{
+				position: "relative",
+				width: "100%",
+				height: "100vh",
+				padding: `${frameMargin}vh`,
+				border: "1px solid red",
+			}}
+		>
+			<div style={{ border: `1px solid ${dark}`, borderRadius: `10px` }}>
+				<Grid align="stretch" gutter={0}>
+					<Grid.Col span={2}>
+						<Container
+							fluid
+							w="100%"
+							bg={dark}
+							pt="sm"
+							pb="md"
+							mb="md"
+							style={{ borderRadius: "8px 0 0 0" }}
+						>
+							<Title c={light}>Hilbert</Title>
+							<Space h="md" />
+							<Text size="sm" c={dim}>
+								Project description goes here. It should be a brief succint text
+								introducing the concept
+							</Text>
+						</Container>
+						<Stack w={"100%"} p={15}>
+							<NumberInput
+								label="iterations"
+								description="..."
+								allowNegative={false}
+								allowDecimal={false}
+								min={2}
+								max={6}
+								value={iterations}
+								onChange={handleIterationCtrlInput}
+							/>
+							{initialized && currentModel && switchConsole(currentModel)}
+						</Stack>
 					</Grid.Col>
-					<Grid.Col span={10} >
+					<Grid.Col span={10}>
 						<div
-							style={{ position: "relative", height: `${100-frameMargin*2}vh`, borderLeft: `1px solid ${borderColor}`}}
+							style={{
+								position: "relative",
+								height: `${100 - frameMargin * 2}vh`,
+								borderLeft: `1px solid ${dark}`,
+							}}
 						>
 							<div style={{ position: "absolute", top: "15px", left: "15px" }}>
-								<SegmentedControl
-									value={currentModel.option}
-									onChange={handleModelSelection}
-									data={modelOptions}
+								<Stack gap={9}>
+									<SegmentedControl
+										value={currentModel.option}
+										onChange={handleModelSelection}
+										data={modelOptions}
+										color={dark}
+										size="xs"
+										m={0}
+										p={0}
+										classNames={modelSelectorStyles}
+									/>
+									<Text size="sm" fw={500} c={softDark} ml="1vw">
+										Choose a model...
+									</Text>
+								</Stack>
+							</div>
+							<div
+								style={{
+									position: "absolute",
+									bottom: "3vh",
+									left: "3vw",
+									width: "100%",
+									paddingRight: "6vw",
+								}}
+							>
+								<Slider
+									id={"testCtrl"}
+									name={"TestCtrl"}
+									min={0}
+									max={1}
+									step={0.01}
+									onChange={(value) => {
+										handleSliderInput(value, "testCtrl");
+									}}
+									value={0}
+									classNames={sliderStyles}
 								/>
 							</div>
 							<PaperStage onPaperLoad={setIsPaperLoaded} />
 						</div>
 					</Grid.Col>
 				</Grid>
-				</div>
+			</div>
 		</div>
 	);
 };
