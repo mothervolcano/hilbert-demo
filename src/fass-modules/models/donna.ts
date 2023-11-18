@@ -1,4 +1,4 @@
-import { IAlphabet, ICommand, IProduction } from "../../lib/lsys/lsys";
+import { IAlphabet, IProduction } from "../../lib/lsys/lsys";
 import Command from "../../lib/lsys/core/command";
 import Model from "../../lib/lsys/core/model";
 import ProductionRule from "../../lib/lsys/core/productionRule";

@@ -1,28 +1,13 @@
-import { IAlphabet, ICommand, IProduction } from "../../lib/lsys/lsys";
+import { IAlphabet, IProduction } from "../../lib/lsys/lsys";
 import Command from "../../lib/lsys/core/command";
 import Model from "../../lib/lsys/core/model";
 import ProductionRule from "../../lib/lsys/core/productionRule";
 
 import OrtoTile from "../tiles/ortoTile2x2";
-import { genRandom } from "../../lib/lsys/tools/randomGenerators";
-
-const PEANO_L = "LFRFL-F-RFLFR+F+LFRFL";
-const PEANO_R = "RFLFR+F+LFRFL-F-RFLFR";
 
 const HILBERT_L = "+RF-LFL-FR+";
 const HILBERT_R = "-LF+RFR+FL-";
 
-const rule2L = "LF+RFR+FL-F-LFLFL-FRFR+";
-const rule2R = "RF-LFL-FR+F+RFRFR+FLFL-";
-
-const rule3L = "LFLF+RFRFR+F+RF-LFL-FRF-LFLFLFL-FRFRFR+";
-const rule3R = "RFRF-LFLFL-F-LF+RFR+FLF+RFRFRFR+FLFLFL-";
-
-const rule4L = "LFLFLF+RFRFRFR+FLF+RFR+FL-F-LFLFL-FRFRF-LFLFLFLFL-FRFRFRFR+";
-const rule4R = "RFRFRF-LFLFLFL-FRF-LFL-FR+F+RFRFR+FLFLF+RFRFRFRFR+FLFLFLFL-";
-
-const R4_2L = "LFLF+RFRFR+F+RF-LFL-FRF-LFLFLFL-FRFRFR+";
-const R4_2R = "RFRF-LFLFL-F-LF+RFR+FLF+RFRFRFR+FLFLFL-";
 
 class Schenck extends Model {
 	private currentTile: any;

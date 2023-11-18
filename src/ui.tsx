@@ -3,11 +3,10 @@ import sliderStyles from "./styles/slider.module.css";
 
 import { useState, useEffect } from "react";
 
-import { Model, Param, ParamSet } from "./fass";
+import { Model, Param, ParamSet } from "./types";
 
 import {
 	Container,
-	Flex,
 	Grid,
 	NumberInput,
 	SegmentedControl,
@@ -33,15 +32,8 @@ import {
 	refresh,
 	redraw,
 	extractPath,
-} from "./main";
+} from "./stage";
 
-// --------------------------------------------------------------
-// TYPES
-
-interface ModelOption {
-	label: string;
-	value: Model;
-}
 
 // --------------------------------------------------------------
 // HELPERS
@@ -55,6 +47,8 @@ function parseParams(updatedParams: ParamSet) {
 
 	return modelParams;
 }
+
+// ---------------------------------------------------------------
 
 const UI = () => {
 	const [isPaperLoaded, setIsPaperLoaded] = useState<boolean>(false);
@@ -190,7 +184,6 @@ const UI = () => {
 	const softDark = DEFAULT_THEME.colors.dark[0];
 	const light = DEFAULT_THEME.colors.gray[0];
 	const softLight = DEFAULT_THEME.colors.gray[2];
-	const dim = DEFAULT_THEME.colors.gray[2];
 
 	return (
 		<div
@@ -216,7 +209,7 @@ const UI = () => {
 						>
 							<Title c={light}>Hilbert</Title>
 							<Space h="md" />
-							<Text size="sm" c={dim}>
+							<Text size="sm" c={softLight}>
 								Project description goes here. It should be a brief succint text
 								introducing the concept
 							</Text>

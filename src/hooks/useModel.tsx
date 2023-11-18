@@ -1,8 +1,6 @@
 import { Dispatch, useReducer, useState } from "react";
 
-import { IAlphabet, ICommand, IComposer, IModel } from "../lib/lsys/lsys";
-
-import { Model, Param, ParamSet } from "../fass";
+import { Model, Param, ParamSet } from "../types";
 
 import Alphabet from "../lib/lsys/core/alphabet";
 
@@ -124,7 +122,7 @@ const models: Model[] = [
     option: "ANTON",
     label: "Anton Hilbert Curve",
     icon: null,
-    model: Schenck,
+    model: Anton,
     console: DefaultConsole,
     params: defaultParamScheme,
     default: false,
