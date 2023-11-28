@@ -31,6 +31,7 @@ import {
 	generate,
 	refresh,
 	redraw,
+	retrace,
 	extractPath,
 } from "./stage";
 
@@ -114,6 +115,7 @@ const UI = () => {
 	}, [paramsForConsole]);
 
 	// .............................................................................
+	// ACTION: mod parameter change
 
 	useEffect(() => {
 		if (!isPaperLoaded) {
@@ -130,6 +132,7 @@ const UI = () => {
 	}, [currentModel]);
 
 	// .............................................................................
+	// ACTION: iteration number change
 
 	useEffect(() => {
 		if (!isPaperLoaded) {
@@ -144,6 +147,11 @@ const UI = () => {
 		generate(currentModel.model, iterations, params);
 		redraw(params);
 	}, [iterations]);
+
+
+	// .............................................................................
+	// ACTION: tracing slider input
+
 
 	// ----------------------------------------------------------------------------
 	// HANDLERS
@@ -163,7 +171,10 @@ const UI = () => {
 		console.log(`selected: ${value}`, currentModel);
 	};
 
-	const handleSliderInput = (value: number, id: string) => {};
+	const handleSliderInput = (value: number, id: string) => {
+
+		retrace(value)
+	};
 
 	// -------------------------------------------------------------------------------------------------------
 	// AUX
@@ -267,11 +278,11 @@ const UI = () => {
 									name={"TestCtrl"}
 									min={0}
 									max={1}
-									step={0.01}
+									step={0.001}
 									onChange={(value) => {
 										handleSliderInput(value, "testCtrl");
 									}}
-									value={0}
+									// value={0}
 									classNames={sliderStyles}
 								/>
 							</div>
