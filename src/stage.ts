@@ -124,8 +124,10 @@ export function redraw(params: any) {
 
   fassPath = new Path({
     strokeColor: "black",
-    strokeWidth: 1,
+    strokeWidth: 1 + 5*p3Ctrl*scaleCtrl,
     visible: !DEBUG_MODE,
+    // closed: true,
+    // fillColor: 'turquoise'
   });
 
   fassLayer.addChild(fassPath);
@@ -134,7 +136,7 @@ export function redraw(params: any) {
     path: fassPath,
     scale: scaleFactor,
     size: scaleCtrl,
-    interspace: interspaceCtrl,
+    interspace: interspaceCtrl*0.75,
     p3: p3Ctrl,
     p4: p4Ctrl,
   };

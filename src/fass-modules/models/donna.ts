@@ -61,7 +61,7 @@ class Donna extends Model {
 		const moveForward = (tool: any, context?: any) => {
 			tool.forward(
 				this.distance *
-					context.interspace *
+					(context.interspace*0.5) *
 					context.scale *
 					context.size,
 			);
@@ -73,7 +73,7 @@ class Donna extends Model {
 				[6, 0],
 				tool.position(),
 				this.distance,
-				this.distance * context.p3 * context.scale * context.size,
+				this.distance * (1-context.interspace*0.50) * context.scale * context.size,
 				tool.angle(),
 			);
 			this.currentTile.addSegment(1);
@@ -96,7 +96,7 @@ class Donna extends Model {
 				[0, 6],
 				tool.position(),
 				this.distance,
-				this.distance * context.p3 * context.scale * context.size,
+				this.distance * (1-context.interspace*0.50) * context.scale * context.size,
 				tool.angle(),
 			);
 			this.currentTile.addSegment(5);

@@ -60,7 +60,7 @@ class ModelTest extends Model {
 		const moveForward = (tool: any, context?: any) => {
 			tool.forward(
 				this.distance *
-					context.interspace *
+					(0.45+context.interspace) *
 					context.scale *
 					context.size,
 			);
@@ -72,7 +72,7 @@ class ModelTest extends Model {
 				[3, 0],
 				tool.position(),
 				this.distance,
-				this.distance * context.p3 * context.scale * context.size,
+				this.distance * (1.45-context.interspace) * context.scale * context.size,
 				tool.angle(),
 			);
 			this.currentTile.addSegment(1);
@@ -93,7 +93,7 @@ class ModelTest extends Model {
 				[0, 3],
 				tool.position(),
 				this.distance,
-				this.distance * context.p3 * context.scale * context.size,
+				this.distance * (1.45-context.interspace) * context.scale * context.size,
 				tool.angle(),
 			);
 			this.currentTile.addSegment(2);

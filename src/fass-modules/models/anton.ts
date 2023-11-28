@@ -72,7 +72,7 @@ class Anton extends Model {
 				[6, 7],
 				tool.position(),
 				this.distance,
-				this.distance * context.p3 * context.scale * context.size,
+				this.distance * (1-context.interspace) * context.scale * context.size,
 				tool.angle(),
 			);
 			this.currentTile.addSegment(1);
@@ -94,7 +94,7 @@ class Anton extends Model {
 				[0, 7],
 				tool.position(),
 				this.distance,
-				this.distance * context.p3 * context.scale * context.size,
+				this.distance * (1-context.interspace) * context.scale * context.size,
 				tool.angle(),
 			);
 			this.currentTile.addSegment(5);

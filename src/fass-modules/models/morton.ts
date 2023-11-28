@@ -60,7 +60,7 @@ class Morton extends Model {
 		const moveForward = (tool: any, context?: any) => {
 			tool.forward(
 				this.distance *
-					context.interspace *
+					(context.interspace*0.70) *
 					context.scale *
 					context.size,
 			);
@@ -72,7 +72,7 @@ class Morton extends Model {
 				[3, 0],
 				tool.position(),
 				this.distance,
-				this.distance * context.p3 * context.scale * context.size,
+				this.distance * (1-context.interspace*0.70) * context.scale * context.size,
 				tool.angle(),
 			);
 			this.currentTile.addSegment(0, 0.25);
@@ -97,7 +97,7 @@ class Morton extends Model {
 				[0, 3],
 				tool.position(),
 				this.distance,
-				this.distance * context.p3 * context.scale * context.size,
+				this.distance * (1-context.interspace*0.70) * context.scale * context.size,
 				tool.angle(),
 			);
 			this.currentTile.addSegment(2, 0.75);
