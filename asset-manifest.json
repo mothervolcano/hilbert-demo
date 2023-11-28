@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/hilbert-demo/static/css/main.567965cc.css",
+    "main.js": "/hilbert-demo/static/js/main.91921d02.js",
+    "static/js/787.96b8605c.chunk.js": "/hilbert-demo/static/js/787.96b8605c.chunk.js",
+    "index.html": "/hilbert-demo/index.html",
+    "main.567965cc.css.map": "/hilbert-demo/static/css/main.567965cc.css.map",
+    "main.91921d02.js.map": "/hilbert-demo/static/js/main.91921d02.js.map",
+    "787.96b8605c.chunk.js.map": "/hilbert-demo/static/js/787.96b8605c.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.567965cc.css",
+    "static/js/main.91921d02.js"
+  ]
+}
