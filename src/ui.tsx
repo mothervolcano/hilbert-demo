@@ -31,8 +31,7 @@ import {
 	generate,
 	refresh,
 	redraw,
-	retrace,
-	extractPath,
+	retrace
 } from "./stage";
 
 
@@ -59,7 +58,7 @@ const UI = () => {
 	const [paramsForConsole, setParamsForConsole] = useState<ParamSet | null>(
 		null,
 	);
-	const [iterations, setIterations] = useState<number>(3);
+	const [iterations, setIterations] = useState<number>(4);
 
 	// ----------------------------------------------------------------------------
 
@@ -203,7 +202,6 @@ const UI = () => {
 				width: "100%",
 				height: "100vh",
 				padding: `${frameMargin}vh`,
-				border: "1px solid red",
 			}}
 		>
 			<div style={{ border: `1px solid ${dark}`, borderRadius: `10px` }}>
@@ -224,6 +222,7 @@ const UI = () => {
 								Project description goes here. It should be a brief succint text
 								introducing the concept
 							</Text>
+							<Space h="sm"/>
 						</Container>
 						<Stack w={"100%"} p={15}>
 							<NumberInput
@@ -231,7 +230,7 @@ const UI = () => {
 								description="..."
 								allowNegative={false}
 								allowDecimal={false}
-								min={2}
+								min={1}
 								max={6}
 								value={iterations}
 								onChange={handleIterationCtrlInput}
@@ -274,13 +273,13 @@ const UI = () => {
 								}}
 							>
 								<Slider
-									id={"testCtrl"}
-									name={"TestCtrl"}
+									id={"retraceCtrl"}
+									name={"RetraceCtrl"}
 									min={0}
 									max={1}
 									step={0.001}
 									onChange={(value) => {
-										handleSliderInput(value, "testCtrl");
+										handleSliderInput(value, "retraceCtrl");
 									}}
 									// value={0}
 									classNames={sliderStyles}

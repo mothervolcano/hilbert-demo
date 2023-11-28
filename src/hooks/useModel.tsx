@@ -16,44 +16,28 @@ import DefaultConsole from "../components/consoles/defaultConsole";
 
 const defaultParamScheme: ParamSet = [
   {
-    id: "mkp5",
+    id: "hlbp1",
     name: "scaleCtrl",
     value: 1,
     range: [0, 2],
     step: 0.01,
-    label: "scale",
+    label: "Scale",
   },
   {
-    id: "mkp3",
+    id: "hlbp2",
     name: "interspaceCtrl",
-    value: 1,
+    value: 0.5,
     range: [0, 1],
     step: 0.01,
-    label: "interspace",
+    label: "Variation",
   },
   {
-    id: "mkp4",
+    id: "hlbp3",
     name: "p3Ctrl",
     value: 0,
     range: [0, 1],
     step: 0.01,
-    label: "P3",
-  },
-  {
-    id: "mkp6",
-    name: "p4Ctrl",
-    value: 1,
-    range: [0, 1],
-    step: 0.01,
-    label: "P4",
-  },
-  {
-    id: "mkp7",
-    name: "empty",
-    value: 1,
-    range: [0, 2],
-    step: 0.01,
-    label: "P7",
+    label: "Stroke Thickness",
   },
 ];
 

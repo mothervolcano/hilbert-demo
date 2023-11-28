@@ -22,8 +22,6 @@ const DefaultConsole = (props: ConsoleProps) => {
 	// ------------------------------------------------------
 
 	function handleSliderInput(value: number, id: string) {
-		console.log(`@DefaultConsole: slider ---> ${value}  / ${id}`);
-
 		const updatedParams = params.slice();
 
 		updatedParams.map((item: any) => {
@@ -37,69 +35,23 @@ const DefaultConsole = (props: ConsoleProps) => {
 
 	return (
 		<Stack gap={15}>
-			<Stack gap={3}>
-				<StyledText>{params[0].label}</StyledText>
-				<Slider
-					id={params[0].id}
-					name={params[0].id}
-					min={params[0].range[0]}
-					max={params[0].range[1]}
-					step={params[0].step}
-					onChange={(value) => {
-						handleSliderInput(value, params[0].id);
-					}}
-					value={params[0].value}
-					classNames={sliderStyles}
-				/>
-			</Stack>
-
-			<Stack gap={2}>
-				<StyledText>{params[1].label}</StyledText>
-				<Slider
-					id={params[1].id}
-					name={params[1].id}
-					min={params[1].range[0]}
-					max={params[1].range[1]}
-					step={params[1].step}
-					onChange={(value) => {
-						handleSliderInput(value, params[1].id);
-					}}
-					value={params[1].value}
-					classNames={sliderStyles}
-				/>
-			</Stack>
-
-			<Stack gap={2}>
-				<StyledText>{params[2].label}</StyledText>
-				<Slider
-					id={params[2].id}
-					name={params[2].id}
-					min={params[2].range[0]}
-					max={params[2].range[1]}
-					step={params[2].step}
-					onChange={(value) => {
-						handleSliderInput(value, params[2].id);
-					}}
-					value={params[2].value}
-					classNames={sliderStyles}
-				/>
-			</Stack>
-
-			<Stack gap={2}>
-				<StyledText>{params[3].label}</StyledText>
-				<Slider
-					id={params[3].id}
-					name={params[3].id}
-					min={params[3].range[0]}
-					max={params[3].range[1]}
-					step={params[3].step}
-					onChange={(value) => {
-						handleSliderInput(value, params[3].id);
-					}}
-					value={params[3].value}
-					classNames={sliderStyles}
-				/>
-			</Stack>
+			{params.map((p: any) => (
+				<Stack gap={2}>
+					<StyledText>{p.label}</StyledText>
+					<Slider
+						id={p.id}
+						name={p.id}
+						min={p.range[0]}
+						max={p.range[1]}
+						step={p.step}
+						onChange={(value) => {
+							handleSliderInput(value, p.id);
+						}}
+						value={p.value}
+						classNames={sliderStyles}
+					/>
+				</Stack>
+			))}
 		</Stack>
 	);
 };
