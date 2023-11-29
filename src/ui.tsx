@@ -25,15 +25,7 @@ import useModel from "./hooks/useModel";
 
 import PaperStage from "./components/paperStage";
 
-import {
-	reset,
-	initModel,
-	generate,
-	refresh,
-	redraw,
-	retrace
-} from "./stage";
-
+import { reset, initModel, generate, refresh, redraw, retrace } from "./stage";
 
 // --------------------------------------------------------------
 // HELPERS
@@ -55,9 +47,7 @@ const UI = () => {
 	const [initialized, setInitialized] = useState<boolean>(false);
 
 	const [models, currentModel, setCurrentModel] = useModel();
-	const [paramsForConsole, setParamsForConsole] = useState<ParamSet | null>(
-		null,
-	);
+	const [paramsForConsole, setParamsForConsole] = useState<ParamSet | null>(null);
 	const [iterations, setIterations] = useState<number>(4);
 
 	// ----------------------------------------------------------------------------
@@ -114,7 +104,7 @@ const UI = () => {
 	}, [paramsForConsole]);
 
 	// .............................................................................
-	// ACTION: mod parameter change
+	// ACTION: model change
 
 	useEffect(() => {
 		if (!isPaperLoaded) {
@@ -147,10 +137,8 @@ const UI = () => {
 		redraw(params);
 	}, [iterations]);
 
-
 	// .............................................................................
 	// ACTION: tracing slider input
-
 
 	// ----------------------------------------------------------------------------
 	// HANDLERS
@@ -171,8 +159,22 @@ const UI = () => {
 	};
 
 	const handleSliderInput = (value: number, id: string) => {
+		retrace(value);
+	};
 
-		retrace(value)
+	const handleCanvasResize = (width: number, height: number) => {
+		console.log("canvas size: ", width, height);
+
+		if (isPaperLoaded && width && height) {
+			console.log(`2 --> RESIZING for ${iterations} iterations`);
+
+			reset();
+			initModel(width, height);
+			const params: ParamSet = parseParams(currentModel.params);
+			refresh();
+			generate(currentModel.model, iterations, params);
+			redraw(params);
+		}
 	};
 
 	// -------------------------------------------------------------------------------------------------------
@@ -181,12 +183,7 @@ const UI = () => {
 	const switchConsole = (model: Model) => {
 		const Console = model.console;
 
-		return (
-			<Console
-				params={paramsForConsole}
-				inputHandler={handleParamCtrlInputForModel}
-			/>
-		);
+		return <Console params={paramsForConsole} inputHandler={handleParamCtrlInputForModel} />;
 	};
 
 	const frameMargin = 6;
@@ -219,10 +216,9 @@ const UI = () => {
 							<Title c={light}>Hilbert</Title>
 							<Space h="md" />
 							<Text size="sm" c={softLight}>
-								Project description goes here. It should be a brief succint text
-								introducing the concept
+								Project description goes here. It should be a brief succint text introducing the concept
 							</Text>
-							<Space h="sm"/>
+							<Space h="sm" />
 						</Container>
 						<Stack w={"100%"} p={15}>
 							<NumberInput
@@ -285,7 +281,7 @@ const UI = () => {
 									classNames={sliderStyles}
 								/>
 							</div>
-							<PaperStage onPaperLoad={setIsPaperLoaded} />
+							<PaperStage onPaperLoad={setIsPaperLoaded} onResize={handleCanvasResize} />
 						</div>
 					</Grid.Col>
 				</Grid>

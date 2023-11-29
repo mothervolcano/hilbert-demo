@@ -1,11 +1,31 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useLayoutEffect, useState } from "react";
+
+import useResizeObserver from "@react-hook/resize-observer";
 
 import { PaperScope } from "paper";
 
 export const paperScope = new PaperScope();
 
-const PaperStage = ({ onPaperLoad }: any) => {
+const useSize = (target: any): any => {
+	const [size, setSize] = useState();
+
+	useLayoutEffect(() => {
+		setSize(target.current.getBoundingClientRect());
+	}, [target]);
+
+	useResizeObserver(target, (entry: any) => setSize(entry.contentRect));
+
+	return size;
+};
+
+const PaperStage = ({ onPaperLoad, onResize }: any) => {
+	const containerRef = useRef<HTMLDivElement>(null);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const size = useSize(containerRef);
+
+	if (size) {
+		console.log("resize observer: ", size.width);
+	}
 
 	useEffect(() => {
 		if (canvasRef.current !== null) {
@@ -17,11 +37,21 @@ const PaperStage = ({ onPaperLoad }: any) => {
 		}
 	}, []);
 
+
+	useEffect(() => {
+	    // Update canvas size based on parent size
+	    if (canvasRef.current && size) {
+	        canvasRef.current.width = size.width;
+	        canvasRef.current.height = size.height;
+	        // paperScope.project.view.viewSize = new paperScope.Size(size.width, size.height);
+	        onResize(size.width, size.height);
+	    }
+	}, [size]);
+
 	return (
-		<canvas
-			style={{ position: "relative", width: "100%", height: "100%"}}
-			ref={canvasRef}
-		></canvas>
+		<div style={{ width: "100%", height: "100%"}} ref={containerRef}>
+			<canvas style={{ position: "relative", width: "100%", height: "100%" }} ref={canvasRef}></canvas>
+		</div>
 	);
 };
 

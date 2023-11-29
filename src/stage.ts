@@ -54,9 +54,13 @@ export function reset() {
 // ----------------------------------------------------------------------------------------
 // Note: initializes the requested model and creates a state and or context that is used by the other methods: generate, regenerate and redraw;
 
-export function initModel(clipPathData?: string) {
+export function initModel(width?: number, height?: number, clipPathData?: string) {
   // ....
   view = paperScope.project.view;
+  if (width && height) {
+    view.viewSize = [width, height];
+  }
+
   origin = view.center;
 
   maskLayer = new Layer();
