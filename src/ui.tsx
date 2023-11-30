@@ -17,6 +17,7 @@ import {
 	DEFAULT_THEME,
 	Space,
 	Slider,
+	Flex,
 } from "@mantine/core";
 
 // -----------------------------------------------------------
@@ -26,6 +27,46 @@ import useModel from "./hooks/useModel";
 import PaperStage from "./components/paperStage";
 
 import { reset, initModel, generate, refresh, redraw, resize, retrace } from "./stage";
+import { useMediaQuery } from "@mantine/hooks";
+
+// --------------------------------------------------------------
+// LAYOUT COMPONENTS
+
+const Layout = ({ orientation, children }: any) => {
+
+
+	if (orientation === "LANDSCAPE") {
+		return (
+			<Flex>
+				<div style={{ position: "relative", minWidth: "300px", maxWidth: "25%" }}>{children[0]}</div>
+				<div style={{ position: "relative", minWidth: "250px", flexGrow: "1" }}>{children[1]}</div>
+			</Flex>
+		);
+	}
+
+	if (orientation === "PORTRAIT") {
+		return (
+			<Stack justify="flex-start" align="stretch">
+				<div style={{ position: "relative" }}>{children[1]}</div>
+				<div style={{ position: "relative" }}>{children[0]}</div>
+			</Stack>
+		);
+	} 
+	
+	return null;
+
+};
+
+const LayoutTest = ({orientation, children}: any) => {
+
+	if (orientation === "LANDSCAPE") {
+
+		return (<div>{children}</div>)
+	} else {
+		return null
+	}
+
+}
 
 // --------------------------------------------------------------
 // HELPERS
@@ -45,7 +86,7 @@ function parseParams(updatedParams: ParamSet) {
 const UI = () => {
 	const [isPaperLoaded, setIsPaperLoaded] = useState<boolean>(false);
 	const [initialized, setInitialized] = useState<boolean>(false);
-	const [stageSize, setStageSize] = useState<{width: number, height: number} | null>(null)
+	const [stageSize, setStageSize] = useState<{ width: number; height: number } | null>(null);
 
 	const [models, currentModel, setCurrentModel] = useModel();
 	const [paramsForConsole, setParamsForConsole] = useState<ParamSet | null>(null);
@@ -74,13 +115,15 @@ const UI = () => {
 		console.log("1 --> PAPERJS LOADED! CurrentModel: ", stageSize);
 		setParamsForConsole(currentModel.params);
 		reset();
-		if (stageSize) { resize(stageSize) }
+		if (stageSize) {
+			resize(stageSize);
+		}
 		initModel();
 
 		if (!initialized) {
 			setInitialized(true);
 		}
-	}, [isPaperLoaded]);
+	}, [isPaperLoaded, stageSize]);
 
 	// .............................................................................
 	// ACTION: parameters are updated in the UI
@@ -98,7 +141,9 @@ const UI = () => {
 			const params: ParamSet = parseParams(currentModel.params);
 
 			console.log(`2 --> REDRAWING for params change: `, params);
-			if (stageSize) { resize(stageSize) }
+			if (stageSize) {
+				resize(stageSize);
+			}
 			refresh();
 			generate(currentModel.model, iterations, params);
 			redraw(params);
@@ -140,7 +185,20 @@ const UI = () => {
 	}, [iterations]);
 
 	// .............................................................................
-	// ACTION: tracing slider input
+	// ACTION: on browser window resize
+
+	// useEffect(() => {
+	// 	if (!isPaperLoaded) {
+	// 		console.log("PAPER ISN'T LOADED");
+	// 		return () => {};
+	// 	}
+
+	// 	console.log(`3 --> RESIZING`);
+
+	// 	if (stageSize) {
+	// 		resize(stageSize);
+	// 	}
+	// }, [stageSize]);
 
 	// ----------------------------------------------------------------------------
 	// HANDLERS
@@ -165,6 +223,13 @@ const UI = () => {
 	};
 
 	// -------------------------------------------------------------------------------------------------------
+	// MEDIA QUERIES
+
+	const isDesktop = useMediaQuery("(min-width: 1024px)");
+	const isLandscape = useMediaQuery("(orientation: landscape)");
+	const isPortrait = useMediaQuery("(orientation: portrait)");
+
+	// -------------------------------------------------------------------------------------------------------
 	// AUX
 
 	const switchConsole = (model: Model) => {
@@ -179,99 +244,155 @@ const UI = () => {
 	const light = DEFAULT_THEME.colors.gray[0];
 	const softLight = DEFAULT_THEME.colors.gray[2];
 
+	const containerStyle = {
+		// position: "relative",
+		width: "100%",
+		height: "100vh",
+		padding: isDesktop ? `${frameMargin}vh` : "0",
+	};
+
+	const frameStyle = {
+		border: isDesktop ? `1px solid ${dark}` : "none",
+		borderRadius: isDesktop ? `10px` : "none",
+	};
+
+	const sidebarStyle = {
+		borderRadius: isDesktop ? "8px 0 0 0" : "none",
+	};
+
+	const stageStyle = {
+		height: isLandscape ? `${100 - frameMargin * 2}vh` : `60vh`,
+		borderLeft: isLandscape ? `1px solid ${dark}` : "none",
+		borderBottom: isLandscape ? "none" : `1px solid ${dark}`,
+	};
+
+	const titleStyle = {};
+
+	// ------------------------------------------------------------------------
+
+	const title = () => {
+		return (
+			<div style={titleStyle}>
+				<Title c={dark}>Polystar</Title>
+			</div>
+		);
+	};
+
+	const panel = () => {
+		return (
+			<div style={{ width: "100%" }}>
+				{isLandscape && (
+					<Container fluid w="100%" bg={dark} pt="sm" pb="md" mb="md" style={{ borderRadius: "8px 0 0 0" }}>
+						<Title c={light}>Hilbert</Title>
+						<Space h="md" />
+						<Text size="sm" c={softLight}>
+							Project description goes here. It should be a brief succint text introducing the concept
+						</Text>
+						<Space h="sm" />
+					</Container>
+				)}
+				<Stack w={"100%"} p={15}>
+					<NumberInput
+						label="iterations"
+						description="..."
+						allowNegative={false}
+						allowDecimal={false}
+						min={1}
+						max={6}
+						value={iterations}
+						onChange={handleIterationCtrlInput}
+					/>
+					{initialized && currentModel && switchConsole(currentModel)}
+				</Stack>
+			</div>
+		);
+	};
+
+	const modelSelector = () => {
+		return (
+			<div style={{width: "fit-content"}}>
+				<Stack gap={9}>
+					<SegmentedControl
+						value={currentModel.option}
+						onChange={handleModelSelection}
+						data={modelOptions}
+						color={dark}
+						size="xs"
+						m={0}
+						p={0}
+						classNames={modelSelectorStyles}
+					/>
+					<Text size="sm" fw={500} c={softDark} ml="1vw">
+						Choose a model...
+					</Text>
+				</Stack>
+			</div>
+		);
+	};
+
+	const tracingControl = () => {
+		return (
+			<div
+				style={{
+					position: "absolute",
+					bottom: "3vh",
+					left: "3vw",
+					width: "100%",
+					paddingRight: "6vw",
+				}}
+			>
+				<Slider
+					id={"retraceCtrl"}
+					name={"RetraceCtrl"}
+					min={0}
+					max={1}
+					step={0.001}
+					onChange={(value) => {
+						handleSliderInput(value, "retraceCtrl");
+					}}
+					// value={0}
+					classNames={sliderStyles}
+				/>
+			</div>
+		);
+	};
+
+	const stage = () => {
+		return (
+			<div style={stageStyle}>
+				<PaperStage onPaperLoad={setIsPaperLoaded} onResize={setStageSize} />
+				<div
+					style={{
+						position: "absolute",
+						top: "0px",
+						left: "0px",
+						width: "100%",
+					}}
+				>
+					{!isLandscape && title()}
+					{modelSelector()}
+				</div>
+				<div
+					style={{
+						position: "absolute",
+						bottom: "0px",
+						left: "0px",
+						width: "100%",
+					}}
+				>
+					{isLandscape && tracingControl()}
+				</div>
+			</div>
+		);
+	};
+
 	return (
-		<div
-			style={{
-				position: "relative",
-				width: "100%",
-				height: "100vh",
-				padding: `${frameMargin}vh`,
-			}}
-		>
-			<div style={{ border: `1px solid ${dark}`, borderRadius: `10px` }}>
-				<Grid align="stretch" gutter={0}>
-					<Grid.Col span={2}>
-						<Container
-							fluid
-							w="100%"
-							bg={dark}
-							pt="sm"
-							pb="md"
-							mb="md"
-							style={{ borderRadius: "8px 0 0 0" }}
-						>
-							<Title c={light}>Hilbert</Title>
-							<Space h="md" />
-							<Text size="sm" c={softLight}>
-								Project description goes here. It should be a brief succint text introducing the concept
-							</Text>
-							<Space h="sm" />
-						</Container>
-						<Stack w={"100%"} p={15}>
-							<NumberInput
-								label="iterations"
-								description="..."
-								allowNegative={false}
-								allowDecimal={false}
-								min={1}
-								max={6}
-								value={iterations}
-								onChange={handleIterationCtrlInput}
-							/>
-							{initialized && currentModel && switchConsole(currentModel)}
-						</Stack>
-					</Grid.Col>
-					<Grid.Col span={10}>
-						<div
-							style={{
-								position: "relative",
-								height: `${100 - frameMargin * 2}vh`,
-								borderLeft: `1px solid ${dark}`,
-							}}
-						>
-							<div style={{ position: "absolute", top: "15px", left: "15px" }}>
-								<Stack gap={9}>
-									<SegmentedControl
-										value={currentModel.option}
-										onChange={handleModelSelection}
-										data={modelOptions}
-										color={dark}
-										size="xs"
-										m={0}
-										p={0}
-										classNames={modelSelectorStyles}
-									/>
-									<Text size="sm" fw={500} c={softDark} ml="1vw">
-										Choose a model...
-									</Text>
-								</Stack>
-							</div>
-							<div
-								style={{
-									position: "absolute",
-									bottom: "3vh",
-									left: "3vw",
-									width: "100%",
-									paddingRight: "6vw",
-								}}
-							>
-								<Slider
-									id={"retraceCtrl"}
-									name={"RetraceCtrl"}
-									min={0}
-									max={1}
-									step={0.001}
-									onChange={(value) => {
-										handleSliderInput(value, "retraceCtrl");
-									}}
-									// value={0}
-									classNames={sliderStyles}
-								/>
-							</div>
-							<PaperStage onPaperLoad={setIsPaperLoaded} onResize={setStageSize} />
-						</div>
-					</Grid.Col>
-				</Grid>
+		<div style={containerStyle}>
+			<div style={frameStyle}>
+				<Layout orientation={isLandscape ? "LANDSCAPE" : isPortrait ? "PORTRAIT" : null}>
+					{panel()}
+					{stage()}
+				</Layout>
 			</div>
 		</div>
 	);
