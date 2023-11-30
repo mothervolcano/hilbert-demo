@@ -1,5 +1,4 @@
 import modelSelectorStyles from "./styles/modelSelector.module.css";
-import sliderStyles from "./styles/slider.module.css";
 
 import { useState, useEffect } from "react";
 
@@ -19,6 +18,8 @@ import {
 	Slider,
 	Flex,
 } from "@mantine/core";
+
+import sliderStyles from "./styles/slider.module.css";
 
 // -----------------------------------------------------------
 
@@ -84,13 +85,15 @@ function parseParams(updatedParams: ParamSet) {
 // ---------------------------------------------------------------
 
 const UI = () => {
-	const [isPaperLoaded, setIsPaperLoaded] = useState<boolean>(false);
+	const [paperLoaded, setPaperLoaded] = useState<boolean>(false);
 	const [initialized, setInitialized] = useState<boolean>(false);
-	const [stageSize, setStageSize] = useState<{ width: number; height: number } | null>(null);
 
 	const [models, currentModel, setCurrentModel] = useModel();
 	const [paramsForConsole, setParamsForConsole] = useState<ParamSet | null>(null);
+	
+	const [stageSize, setStageSize] = useState<{ width: number; height: number } | null>(null);
 	const [iterations, setIterations] = useState<number>(4);
+	const [pathOffset, setPathOffset] = useState<number>(0)
 
 	// ----------------------------------------------------------------------------
 
@@ -108,7 +111,7 @@ const UI = () => {
 	// ACTION: the app is loaded
 
 	useEffect(() => {
-		if (!isPaperLoaded) {
+		if (!paperLoaded) {
 			console.log("PAPER HASN'T LOADED");
 			return () => {};
 		}
@@ -123,13 +126,13 @@ const UI = () => {
 		if (!initialized) {
 			setInitialized(true);
 		}
-	}, [isPaperLoaded, stageSize]);
+	}, [paperLoaded, stageSize]);
 
 	// .............................................................................
 	// ACTION: parameters are updated in the UI
 
 	useEffect(() => {
-		if (!isPaperLoaded) {
+		if (!paperLoaded) {
 			console.log("PAPER HASN'T LOADED");
 			return () => {};
 		}
@@ -154,7 +157,7 @@ const UI = () => {
 	// ACTION: model change
 
 	useEffect(() => {
-		if (!isPaperLoaded) {
+		if (!paperLoaded) {
 			console.log("PAPER HASN'T LOADED");
 			return () => {};
 		}
@@ -171,7 +174,7 @@ const UI = () => {
 	// ACTION: iteration number change
 
 	useEffect(() => {
-		if (!isPaperLoaded) {
+		if (!paperLoaded) {
 			console.log("PAPER HASN'T LOADED");
 			return () => {};
 		}
@@ -215,10 +218,12 @@ const UI = () => {
 
 	const handleModelSelection = (value: string) => {
 		setCurrentModel({ type: value });
+		setPathOffset(0);
 		console.log(`selected: ${value}`, currentModel);
 	};
 
 	const handleSliderInput = (value: number, id: string) => {
+		setPathOffset(value);
 		retrace(value);
 	};
 
@@ -350,7 +355,7 @@ const UI = () => {
 					onChange={(value) => {
 						handleSliderInput(value, "retraceCtrl");
 					}}
-					// value={0}
+					value={pathOffset}
 					classNames={sliderStyles}
 				/>
 			</div>
@@ -360,7 +365,7 @@ const UI = () => {
 	const stage = () => {
 		return (
 			<div style={stageStyle}>
-				<PaperStage onPaperLoad={setIsPaperLoaded} onResize={setStageSize} />
+				<PaperStage onPaperLoad={setPaperLoaded} onResize={setStageSize} />
 				<div
 					style={{
 						position: "absolute",
