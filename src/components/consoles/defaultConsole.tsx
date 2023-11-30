@@ -36,7 +36,7 @@ const DefaultConsole = (props: ConsoleProps) => {
 	return (
 		<Stack gap={15}>
 			{params.map((p: any) => (
-				<Stack gap={2}>
+				<Stack key={p.id} gap={2}>
 					<StyledText>{p.label}</StyledText>
 					<Slider
 						id={p.id}
