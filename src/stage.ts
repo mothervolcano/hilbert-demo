@@ -30,8 +30,21 @@ function clipPath(path: any, mask: any) {
   group.clipped = true;
 }
 
+
 // ----------------------------------------------------------------------------------------
 //
+
+
+export function resize( { width, height}: {width:number; height:number}) {
+  if (view) {
+    view.viewSize = [width, height];
+  }
+}
+
+export function reset() {
+  paperScope.project.clear();
+}
+
 
 export function refresh() {
   // paperScope.project.clear();
@@ -47,20 +60,10 @@ export function refresh() {
   // TODO: check if there's anything that needs to be cleared in both the model and sequencer
 }
 
-export function resize( { width, height}: {width:number; height:number}) {
-  if (view) {
-    view.viewSize = [width, height];
-  }
-}
-
-export function reset() {
-  paperScope.project.clear();
-}
-
 // ----------------------------------------------------------------------------------------
 // Note: initializes the requested model and creates a state and or context that is used by the other methods: generate, regenerate and redraw;
 
-export function initModel(width?: number, height?: number, clipPathData?: string) {
+export function initModel(clipPathData?: string) {
   // ....
   view = paperScope.project.view;
 
@@ -153,6 +156,8 @@ export function redraw(params: any) {
   }
 
   // clipPath(fassPath, pathMask);
+
+  fassPath.scale(view.size.height/fassPath.bounds.height*0.75)
 
   const stageCenter = [view.size.width / 2, view.size.height / 2];
 
