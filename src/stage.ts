@@ -47,6 +47,12 @@ export function refresh() {
   // TODO: check if there's anything that needs to be cleared in both the model and sequencer
 }
 
+export function resize( { width, height}: {width:number; height:number}) {
+  if (view) {
+    view.viewSize = [width, height];
+  }
+}
+
 export function reset() {
   paperScope.project.clear();
 }
@@ -57,9 +63,6 @@ export function reset() {
 export function initModel(width?: number, height?: number, clipPathData?: string) {
   // ....
   view = paperScope.project.view;
-  if (width && height) {
-    view.viewSize = [width, height];
-  }
 
   origin = view.center;
 
@@ -128,7 +131,7 @@ export function redraw(params: any) {
 
   fassPath = new Path({
     strokeColor: "black",
-    strokeWidth: 1 + 5*p3Ctrl*scaleCtrl,
+    strokeWidth: 1 + 5 * p3Ctrl * scaleCtrl,
     visible: !DEBUG_MODE,
     // closed: true,
     // fillColor: 'turquoise'
@@ -140,7 +143,7 @@ export function redraw(params: any) {
     path: fassPath,
     scale: scaleFactor,
     size: scaleCtrl,
-    interspace: interspaceCtrl*0.75,
+    interspace: interspaceCtrl * 0.75,
     p3: p3Ctrl,
     p4: p4Ctrl,
   };

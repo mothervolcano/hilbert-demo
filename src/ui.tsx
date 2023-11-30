@@ -25,7 +25,7 @@ import useModel from "./hooks/useModel";
 
 import PaperStage from "./components/paperStage";
 
-import { reset, initModel, generate, refresh, redraw, retrace } from "./stage";
+import { reset, initModel, generate, refresh, redraw, resize, retrace } from "./stage";
 
 // --------------------------------------------------------------
 // HELPERS
@@ -45,6 +45,7 @@ function parseParams(updatedParams: ParamSet) {
 const UI = () => {
 	const [isPaperLoaded, setIsPaperLoaded] = useState<boolean>(false);
 	const [initialized, setInitialized] = useState<boolean>(false);
+	const [stageSize, setStageSize] = useState<{width: number, height: number} | null>(null)
 
 	const [models, currentModel, setCurrentModel] = useModel();
 	const [paramsForConsole, setParamsForConsole] = useState<ParamSet | null>(null);
@@ -70,9 +71,10 @@ const UI = () => {
 			console.log("PAPER HASN'T LOADED");
 			return () => {};
 		}
-		console.log("1 --> PAPERJS LOADED! CurrentModel: ", currentModel);
+		console.log("1 --> PAPERJS LOADED! CurrentModel: ", stageSize);
 		setParamsForConsole(currentModel.params);
 		reset();
+		if (stageSize) { resize(stageSize) }
 		initModel();
 
 		if (!initialized) {
@@ -96,12 +98,12 @@ const UI = () => {
 			const params: ParamSet = parseParams(currentModel.params);
 
 			console.log(`2 --> REDRAWING for params change: `, params);
-
+			if (stageSize) { resize(stageSize) }
 			refresh();
 			generate(currentModel.model, iterations, params);
 			redraw(params);
 		}
-	}, [paramsForConsole]);
+	}, [paramsForConsole, stageSize]);
 
 	// .............................................................................
 	// ACTION: model change
@@ -160,21 +162,6 @@ const UI = () => {
 
 	const handleSliderInput = (value: number, id: string) => {
 		retrace(value);
-	};
-
-	const handleCanvasResize = (width: number, height: number) => {
-		console.log("canvas size: ", width, height);
-
-		if (isPaperLoaded && width && height) {
-			console.log(`2 --> RESIZING for ${iterations} iterations`);
-
-			reset();
-			initModel(width, height);
-			const params: ParamSet = parseParams(currentModel.params);
-			refresh();
-			generate(currentModel.model, iterations, params);
-			redraw(params);
-		}
 	};
 
 	// -------------------------------------------------------------------------------------------------------
@@ -281,7 +268,7 @@ const UI = () => {
 									classNames={sliderStyles}
 								/>
 							</div>
-							<PaperStage onPaperLoad={setIsPaperLoaded} onResize={handleCanvasResize} />
+							<PaperStage onPaperLoad={setIsPaperLoaded} onResize={setStageSize} />
 						</div>
 					</Grid.Col>
 				</Grid>
