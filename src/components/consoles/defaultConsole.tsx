@@ -98,6 +98,7 @@ const DefaultConsole = (props: ConsoleProps) => {
 										handleSliderInput(value, p.id);
 									}}
 									value={p.value}
+									label={null}
 									size="1px"
 									thumbSize={rem(10)}
 									color={dark}
@@ -144,6 +145,7 @@ const DefaultConsole = (props: ConsoleProps) => {
 										handleSliderInput(value, p.id);
 									}}
 									value={p.value}
+									label={null}
 									size="1px"
 									thumbSize={rem(10)}
 									color={dark}

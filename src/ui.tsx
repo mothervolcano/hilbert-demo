@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 
 import { useMediaQuery } from "@mantine/hooks";
@@ -15,6 +14,7 @@ import {
 	Space,
 	Slider,
 	Flex,
+    rem,
 } from "@mantine/core";
 
 import modelSelectorStyles from "./styles/modelSelector.module.css";
@@ -33,8 +33,6 @@ import { reset, initModel, generate, refresh, redraw, resize, retrace } from "./
 // LAYOUT COMPONENTS
 
 const Layout = ({ orientation, children }: any) => {
-
-
 	if (orientation === "LANDSCAPE") {
 		return (
 			<Flex>
@@ -51,10 +49,9 @@ const Layout = ({ orientation, children }: any) => {
 				<div style={{ position: "relative" }}>{children[0]}</div>
 			</Stack>
 		);
-	} 
-	
-	return null;
+	}
 
+	return null;
 };
 
 // --------------------------------------------------------------
@@ -78,10 +75,10 @@ const UI = () => {
 
 	const [models, currentModel, setCurrentModel] = useModel();
 	const [paramsForConsole, setParamsForConsole] = useState<ParamSet | null>(null);
-	
+
 	const [stageSize, setStageSize] = useState<{ width: number; height: number } | null>(null);
 	const [iterations, setIterations] = useState<number>(4);
-	const [pathOffset, setPathOffset] = useState<number>(0)
+	const [pathOffset, setPathOffset] = useState<number>(0);
 
 	// ----------------------------------------------------------------------------
 
@@ -228,7 +225,14 @@ const UI = () => {
 	const switchConsole = (model: Model, layout: string, mode: string) => {
 		const Console = model.console;
 
-		return <Console params={paramsForConsole} inputHandler={handleParamCtrlInputForModel} mode={mode} layout={layout}/>;
+		return (
+			<Console
+				params={paramsForConsole}
+				inputHandler={handleParamCtrlInputForModel}
+				mode={mode}
+				layout={layout}
+			/>
+		);
 	};
 
 	const frameMargin = 6;
@@ -268,11 +272,13 @@ const UI = () => {
 
 	const title = () => {
 		return (
-			<div style={{
+			<div
+				style={{
 					position: "absolute",
 					top: "0.75rem",
 					left: "1rem",
-				}}>
+				}}
+			>
 				<Title c={dark}>Hilbert</Title>
 			</div>
 		);
@@ -291,11 +297,13 @@ const UI = () => {
 						<Space h="sm" />
 					</Container>
 				)}
-				<div style={{paddingLeft:"1rem", paddingRight:"1rem", paddingBottom: "1rem", display: "flex"}}>
-					<div style={{width: "60%"}}>
-						<Title order={5} c={dark}>Iterations</Title>
+				<div style={{ paddingLeft: "1rem", paddingRight: "1rem", paddingBottom: "1rem", display: "flex" }}>
+					<div style={{ width: "60%" }}>
+						<Title order={5} c={dark}>
+							Iterations
+						</Title>
 					</div>
-					<div style={{width: "40%"}}>
+					<div style={{ width: "40%" }}>
 						<NumberInput
 							allowNegative={false}
 							allowDecimal={false}
@@ -306,7 +314,9 @@ const UI = () => {
 						/>
 					</div>
 				</div>
-				<div style={{paddingLeft:"1rem", paddingRight:"1rem", paddingTop: "0.75rem", paddingBottom: "2rem"}}>
+				<div
+					style={{ paddingLeft: "1rem", paddingRight: "1rem", paddingTop: "0.75rem", paddingBottom: "2rem" }}
+				>
 					{initialized && currentModel && switchConsole(currentModel, consoleLayoutType, consoleLayoutMode)}
 				</div>
 			</div>
@@ -315,7 +325,7 @@ const UI = () => {
 
 	const modelSelector = () => {
 		return (
-			<div style={{width: "fit-content"}}>
+			<div style={{ width: "fit-content" }}>
 				<Stack gap={9}>
 					<SegmentedControl
 						value={currentModel.option}
@@ -356,6 +366,12 @@ const UI = () => {
 						handleSliderInput(value, "retraceCtrl");
 					}}
 					value={pathOffset}
+					label={null}
+					size="1px"
+					thumbSize={rem(10)}
+					color={dark}
+					showLabelOnHover={false}
+					styles={{ thumb: { backgroundColor: dark, borderWidth: 0 } }}
 					classNames={sliderStyles}
 				/>
 			</div>
@@ -369,8 +385,8 @@ const UI = () => {
 				<div
 					style={{
 						position: "absolute",
-						top: "0px",
-						left: "0px",
+						top: "1rem",
+						left: "1rem",
 						width: "100%",
 					}}
 				>
