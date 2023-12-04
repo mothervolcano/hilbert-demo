@@ -1,9 +1,7 @@
-import modelSelectorStyles from "./styles/modelSelector.module.css";
 
 import { useState, useEffect } from "react";
 
-import { Model, Param, ParamSet } from "./types";
-
+import { useMediaQuery } from "@mantine/hooks";
 import {
 	Container,
 	Grid,
@@ -19,16 +17,17 @@ import {
 	Flex,
 } from "@mantine/core";
 
+import modelSelectorStyles from "./styles/modelSelector.module.css";
 import sliderStyles from "./styles/slider.module.css";
 
 // -----------------------------------------------------------
 
+import { Model, Param, ParamSet } from "./types";
+
 import useModel from "./hooks/useModel";
 
 import PaperStage from "./components/paperStage";
-
 import { reset, initModel, generate, refresh, redraw, resize, retrace } from "./stage";
-import { useMediaQuery } from "@mantine/hooks";
 
 // --------------------------------------------------------------
 // LAYOUT COMPONENTS
@@ -57,17 +56,6 @@ const Layout = ({ orientation, children }: any) => {
 	return null;
 
 };
-
-const LayoutTest = ({orientation, children}: any) => {
-
-	if (orientation === "LANDSCAPE") {
-
-		return (<div>{children}</div>)
-	} else {
-		return null
-	}
-
-}
 
 // --------------------------------------------------------------
 // HELPERS
@@ -266,7 +254,7 @@ const UI = () => {
 	};
 
 	const stageStyle = {
-		height: isLandscape ? `${100 - frameMargin * 2}vh` : `60vh`,
+		height: isLandscape ? `${100 - frameMargin * 2}vh` : `70vh`,
 		borderLeft: isLandscape ? `1px solid ${dark}` : "none",
 		borderBottom: isLandscape ? "none" : `1px solid ${dark}`,
 	};
@@ -317,7 +305,7 @@ const UI = () => {
 						/>
 					</div>
 				</div>
-				<div style={{paddingLeft:"1rem", paddingRight:"1rem"}}>
+				<div style={{paddingLeft:"1rem", paddingRight:"1rem", paddingTop: "0.75rem", paddingBottom: "2rem"}}>
 					{initialized && currentModel && switchConsole(currentModel, consoleLayoutType)}
 				</div>
 			</div>

@@ -30,6 +30,18 @@ function clipPath(path: any, mask: any) {
   group.clipped = true;
 }
 
+function calculateOrigin(width: number, height: number) {
+  const viewRatio = width/height;
+
+  console.log("view ratio: ", viewRatio )
+
+  if (viewRatio <= 1 ) {
+    return { x: width/2, y: height - height*0.45};
+  }
+  
+  return { x: width/2, y: height/2};
+}
+
 
 // ----------------------------------------------------------------------------------------
 //
@@ -38,6 +50,7 @@ function clipPath(path: any, mask: any) {
 export function resize( { width, height}: {width:number; height:number}) {
   if (view) {
     view.viewSize = [width, height];
+    origin = calculateOrigin(width, height);
   }
 }
 
@@ -67,7 +80,7 @@ export function initModel(clipPathData?: string) {
   // ....
   view = paperScope.project.view;
 
-  origin = view.center;
+  origin = calculateOrigin(view.size.width, view.size.height);
 
   maskLayer = new Layer();
   fassLayer = new Layer();
@@ -156,9 +169,9 @@ export function redraw(params: any) {
 
   // clipPath(fassPath, pathMask);
 
-  fassPath.scale(view.size.height/fassPath.bounds.height*0.75)
+  fassPath.scale(view.size.height/fassPath.bounds.height*0.70)
 
-  const stageCenter = [view.size.width / 2, view.size.height / 2];
+  const stageCenter = calculateOrigin(view.size.width, view.size.height);
 
   maskLayer.position = stageCenter;
   fassLayer.position = stageCenter;
