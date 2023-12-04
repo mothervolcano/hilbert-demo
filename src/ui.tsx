@@ -302,19 +302,24 @@ const UI = () => {
 						<Space h="sm" />
 					</Container>
 				)}
-				<Stack w={"100%"} p={15}>
-					<NumberInput
-						label="iterations"
-						description="..."
-						allowNegative={false}
-						allowDecimal={false}
-						min={1}
-						max={6}
-						value={iterations}
-						onChange={handleIterationCtrlInput}
-					/>
+				<div style={{paddingLeft:"1rem", paddingRight:"1rem", paddingBottom: "1rem", display: "flex"}}>
+					<div style={{width: "60%"}}>
+						<Title order={5} c={dark}>Iterations</Title>
+					</div>
+					<div style={{width: "40%"}}>
+						<NumberInput
+							allowNegative={false}
+							allowDecimal={false}
+							min={1}
+							max={6}
+							value={iterations}
+							onChange={handleIterationCtrlInput}
+						/>
+					</div>
+				</div>
+				<div style={{paddingLeft:"1rem", paddingRight:"1rem"}}>
 					{initialized && currentModel && switchConsole(currentModel, consoleLayoutType)}
-				</Stack>
+				</div>
 			</div>
 		);
 	};

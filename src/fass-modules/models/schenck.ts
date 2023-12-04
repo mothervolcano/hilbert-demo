@@ -62,8 +62,7 @@ class Schenck extends Model {
 			tool.forward(
 				this.distance *
 					context.interspace *
-					context.scale *
-					context.size,
+					context.scale
 			);
 			context.path.addSegments(tool.path().segments);
 		};
@@ -73,7 +72,7 @@ class Schenck extends Model {
 				[6, 0],
 				tool.position(),
 				this.distance,
-				this.distance * (1-context.interspace) * context.scale * context.size,
+				this.distance * (1-context.interspace) * context.scale,
 				tool.angle(),
 			);
 			this.currentTile.addSegment(4);
@@ -93,7 +92,7 @@ class Schenck extends Model {
 				[0, 6],
 				tool.position(),
 				this.distance,
-				this.distance * (1-context.interspace) * context.scale * context.size,
+				this.distance * (1-context.interspace) * context.scale,
 				tool.angle(),
 			);
 			this.currentTile.addSegment(2);

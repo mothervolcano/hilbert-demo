@@ -15,15 +15,15 @@ import Schenck from "../fass-modules/models/schenck";
 import DefaultConsole from "../components/consoles/defaultConsole";
 
 const defaultParamScheme: ParamSet = [
-  {
-    id: "hlbp1",
-    name: "scaleCtrl",
-    value: 1,
-    range: [0, 2],
-    step: 0.01,
-    label: "Scale",
-    rank: 1 
-  },
+  // {
+  //   id: "hlbp1",
+  //   name: "scaleCtrl",
+  //   value: 1,
+  //   range: [0, 2],
+  //   step: 0.01,
+  //   label: "Scale",
+  //   rank: 1 
+  // },
   {
     id: "hlbp2",
     name: "interspaceCtrl",

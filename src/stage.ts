@@ -130,11 +130,11 @@ export function generate(model: IModel, iterations: number, params: any) {
 // Note: modifies the model based on user or external input;
 
 export function redraw(params: any) {
-  const { scaleCtrl, interspaceCtrl, p3Ctrl, p4Ctrl } = params;
+  const { interspaceCtrl, p3Ctrl, p4Ctrl } = params;
 
   fassPath = new Path({
     strokeColor: "black",
-    strokeWidth: 1 + 5 * p3Ctrl * scaleCtrl,
+    strokeWidth: 1 + 5 * p3Ctrl,
     visible: !DEBUG_MODE,
     // closed: true,
     // fillColor: 'turquoise'
@@ -145,7 +145,6 @@ export function redraw(params: any) {
   const context = {
     path: fassPath,
     scale: scaleFactor,
-    size: scaleCtrl,
     interspace: interspaceCtrl * 0.75,
     p3: p3Ctrl,
     p4: p4Ctrl,

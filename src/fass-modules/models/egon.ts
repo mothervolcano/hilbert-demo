@@ -61,8 +61,7 @@ class Egon extends Model {
 			tool.forward(
 				this.distance *
 					(context.interspace*0.70) *
-					context.scale *
-					context.size,
+					context.scale
 			);
 			context.path.addSegments(tool.path().segments);
 		};
@@ -72,7 +71,7 @@ class Egon extends Model {
 				[6, 0],
 				tool.position(),
 				this.distance,
-				this.distance * (1-context.interspace*0.70) * context.scale * context.size,
+				this.distance * (1-context.interspace*0.70) * context.scale,
 				tool.angle(),
 			);
 			this.currentTile.addSegment(1);
@@ -95,7 +94,7 @@ class Egon extends Model {
 				[0, 6],
 				tool.position(),
 				this.distance,
-				this.distance * (1-context.interspace*0.70) * context.scale * context.size,
+				this.distance * (1-context.interspace*0.70) * context.scale,
 				tool.angle(),
 			);
 			this.currentTile.addSegment(5);

@@ -61,8 +61,7 @@ class ModelTest extends Model {
 			tool.forward(
 				this.distance *
 					(0.45+context.interspace) *
-					context.scale *
-					context.size,
+					context.scale
 			);
 			context.path.addSegments(tool.path().segments);
 		};
@@ -72,7 +71,7 @@ class ModelTest extends Model {
 				[3, 0],
 				tool.position(),
 				this.distance,
-				this.distance * (1.45-context.interspace) * context.scale * context.size,
+				this.distance * (1.45-context.interspace) * context.scale,
 				tool.angle(),
 			);
 			this.currentTile.addSegment(1);
@@ -93,7 +92,7 @@ class ModelTest extends Model {
 				[0, 3],
 				tool.position(),
 				this.distance,
-				this.distance * (1.45-context.interspace) * context.scale * context.size,
+				this.distance * (1.45-context.interspace) * context.scale,
 				tool.angle(),
 			);
 			this.currentTile.addSegment(2);
