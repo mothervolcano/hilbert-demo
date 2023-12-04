@@ -225,10 +225,10 @@ const UI = () => {
 	// -------------------------------------------------------------------------------------------------------
 	// AUX
 
-	const switchConsole = (model: Model, layout: string) => {
+	const switchConsole = (model: Model, layout: string, mode: string) => {
 		const Console = model.console;
 
-		return <Console params={paramsForConsole} inputHandler={handleParamCtrlInputForModel} layout={layout}/>;
+		return <Console params={paramsForConsole} inputHandler={handleParamCtrlInputForModel} mode={mode} layout={layout}/>;
 	};
 
 	const frameMargin = 6;
@@ -262,6 +262,7 @@ const UI = () => {
 	const titleStyle = {};
 
 	const consoleLayoutType = isPortrait ? "ROW" : "COL";
+	const consoleLayoutMode = isPortrait ? "COMPACT" : "NORMAL";
 
 	// ------------------------------------------------------------------------
 
@@ -306,7 +307,7 @@ const UI = () => {
 					</div>
 				</div>
 				<div style={{paddingLeft:"1rem", paddingRight:"1rem", paddingTop: "0.75rem", paddingBottom: "2rem"}}>
-					{initialized && currentModel && switchConsole(currentModel, consoleLayoutType)}
+					{initialized && currentModel && switchConsole(currentModel, consoleLayoutType, consoleLayoutMode)}
 				</div>
 			</div>
 		);
