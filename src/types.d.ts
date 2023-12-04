@@ -5,6 +5,7 @@ export interface Param {
   range: [number, number];
   step: number;
   label: string;
+  rank: number;
 }
 
 export type ParamSet = Array<Param>;

@@ -4,6 +4,17 @@ import sliderStyles from "../../styles/slider.module.css";
 interface ConsoleProps {
 	params: any;
 	inputHandler: Function;
+	layout: string;
+	size: string;
+}
+
+interface Style {
+    width: string;
+    display: string;
+    flexDirection: React.CSSProperties['flexDirection'];
+    justifyContent?: React.CSSProperties['justifyContent'];
+    gap?: string;
+
 }
 
 const labelStyleProps = {
@@ -17,7 +28,7 @@ const StyledText = (props: any) => {
 };
 
 const DefaultConsole = (props: ConsoleProps) => {
-	const { params, inputHandler } = props;
+	const { params, inputHandler, layout, size } = props;
 
 	// ------------------------------------------------------
 
@@ -33,26 +44,61 @@ const DefaultConsole = (props: ConsoleProps) => {
 		inputHandler(updatedParams);
 	}
 
+	const rowLayout: Style = {
+		width: "100%",
+		display: "flex",
+		flexDirection: "row",
+		justifyContent: "space-between",
+		gap: "1rem"
+	}
+
+	const colLayout: Style = {
+		width: "100%",
+		display: "flex",
+		flexDirection: "column",
+	}
+
 	return (
-		<Stack gap={15}>
-			{params.map((p: any) => (
-				<Stack key={p.id} gap={2}>
-					<StyledText>{p.label}</StyledText>
-					<Slider
-						id={p.id}
-						name={p.id}
-						min={p.range[0]}
-						max={p.range[1]}
-						step={p.step}
-						onChange={(value) => {
-							handleSliderInput(value, p.id);
-						}}
-						value={p.value}
-						classNames={sliderStyles}
-					/>
-				</Stack>
-			))}
-		</Stack>
+	    <div style={layout === "ROW" ? rowLayout : colLayout}>
+			<div style={{width: "100%"}}>
+				{params.filter((p:any) => p.rank === 1).map((p: any) => (
+					<Stack key={p.id} gap={2}>
+						<StyledText>{p.label}</StyledText>
+						<Slider
+							id={p.id}
+							name={p.id}
+							min={p.range[0]}
+							max={p.range[1]}
+							step={p.step}
+							onChange={(value) => {
+								handleSliderInput(value, p.id);
+							}}
+							value={p.value}
+							classNames={sliderStyles}
+						/>
+					</Stack>
+				))}
+			</div>
+			<div style={{width: "100%"}}>
+				{params.filter((p:any) => p.rank === 2).map((p: any) => (
+					<Stack key={p.id} gap={2}>
+						<StyledText>{p.label}</StyledText>
+						<Slider
+							id={p.id}
+							name={p.id}
+							min={p.range[0]}
+							max={p.range[1]}
+							step={p.step}
+							onChange={(value) => {
+								handleSliderInput(value, p.id);
+							}}
+							value={p.value}
+							classNames={sliderStyles}
+						/>
+					</Stack>
+				))}
+			</div>
+	    </div>
 	);
 };
 

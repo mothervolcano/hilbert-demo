@@ -22,6 +22,7 @@ const defaultParamScheme: ParamSet = [
     range: [0, 2],
     step: 0.01,
     label: "Scale",
+    rank: 1 
   },
   {
     id: "hlbp2",
@@ -30,6 +31,7 @@ const defaultParamScheme: ParamSet = [
     range: [0, 1],
     step: 0.01,
     label: "Variation",
+    rank: 1
   },
   {
     id: "hlbp3",
@@ -38,6 +40,7 @@ const defaultParamScheme: ParamSet = [
     range: [0, 1],
     step: 0.01,
     label: "Stroke Thickness",
+    rank: 2
   },
 ];
 

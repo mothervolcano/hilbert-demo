@@ -237,10 +237,10 @@ const UI = () => {
 	// -------------------------------------------------------------------------------------------------------
 	// AUX
 
-	const switchConsole = (model: Model) => {
+	const switchConsole = (model: Model, layout: string) => {
 		const Console = model.console;
 
-		return <Console params={paramsForConsole} inputHandler={handleParamCtrlInputForModel} />;
+		return <Console params={paramsForConsole} inputHandler={handleParamCtrlInputForModel} layout={layout}/>;
 	};
 
 	const frameMargin = 6;
@@ -273,12 +273,18 @@ const UI = () => {
 
 	const titleStyle = {};
 
+	const consoleLayoutType = isPortrait ? "ROW" : "COL";
+
 	// ------------------------------------------------------------------------
 
 	const title = () => {
 		return (
-			<div style={titleStyle}>
-				<Title c={dark}>Polystar</Title>
+			<div style={{
+					position: "absolute",
+					top: "0.75rem",
+					left: "1rem",
+				}}>
+				<Title c={dark}>Hilbert</Title>
 			</div>
 		);
 	};
@@ -307,7 +313,7 @@ const UI = () => {
 						value={iterations}
 						onChange={handleIterationCtrlInput}
 					/>
-					{initialized && currentModel && switchConsole(currentModel)}
+					{initialized && currentModel && switchConsole(currentModel, consoleLayoutType)}
 				</Stack>
 			</div>
 		);
@@ -375,7 +381,7 @@ const UI = () => {
 					}}
 				>
 					{!isLandscape && title()}
-					{modelSelector()}
+					{!isPortrait && modelSelector()}
 				</div>
 				<div
 					style={{
