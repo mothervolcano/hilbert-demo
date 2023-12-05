@@ -36,7 +36,7 @@ function calculateOrigin(width: number, height: number) {
   console.log("view ratio: ", viewRatio )
 
   if (viewRatio <= 1 ) {
-    return { x: width/2, y: height - height*0.45};
+    return { x: width/2, y: height - height*0.48};
   }
   
   return { x: width/2, y: height/2};
@@ -169,7 +169,7 @@ export function redraw(params: any) {
 
   // clipPath(fassPath, pathMask);
 
-  fassPath.scale(view.size.height/fassPath.bounds.height*0.70)
+  fassPath.scale(view.size.height/fassPath.bounds.height*0.60)
 
   const stageCenter = calculateOrigin(view.size.width, view.size.height);
 

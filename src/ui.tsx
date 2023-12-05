@@ -36,7 +36,7 @@ const Layout = ({ orientation, children }: any) => {
 	if (orientation === "LANDSCAPE") {
 		return (
 			<Flex>
-				<div style={{ position: "relative", minWidth: "300px", maxWidth: "25%" }}>{children[0]}</div>
+				<div style={{ position: "relative", minWidth: "300px", maxWidth: "25%", overflowY: "auto" }}>{children[0]}</div>
 				<div style={{ position: "relative", minWidth: "250px", flexGrow: "1" }}>{children[1]}</div>
 			</Flex>
 		);
@@ -46,7 +46,7 @@ const Layout = ({ orientation, children }: any) => {
 		return (
 			<Stack justify="flex-start" align="stretch">
 				<div style={{ position: "relative" }}>{children[1]}</div>
-				<div style={{ position: "relative" }}>{children[0]}</div>
+				<div style={{ position: "relative", overflowY: "auto"}}>{children[0]}</div>
 			</Stack>
 		);
 	}
@@ -265,7 +265,7 @@ const UI = () => {
 
 	const titleStyle = {};
 
-	const consoleLayoutType = isPortrait ? "ROW" : "COL";
+	const consoleLayoutType = isPortrait ? "COL" : "COL";
 	const consoleLayoutMode = isPortrait ? "COMPACT" : "NORMAL";
 
 	// ------------------------------------------------------------------------
@@ -275,8 +275,8 @@ const UI = () => {
 			<div
 				style={{
 					position: "absolute",
-					top: "0.75rem",
-					left: "1rem",
+					top: "0rem",
+					left: "0.25rem",
 				}}
 			>
 				<Title c={dark}>Hilbert</Title>
@@ -286,7 +286,7 @@ const UI = () => {
 
 	const panel = () => {
 		return (
-			<div style={{ width: "100%" }}>
+			<div style={{ width: "100%"}}>
 				{isLandscape && (
 					<Container fluid w="100%" bg={dark} pt="sm" pb="md" mb="md" style={{ borderRadius: "8px 0 0 0" }}>
 						<Title c={light}>Hilbert</Title>
@@ -297,7 +297,7 @@ const UI = () => {
 						<Space h="sm" />
 					</Container>
 				)}
-				<div style={{ paddingLeft: "1rem", paddingRight: "1rem", paddingBottom: "1rem", display: "flex" }}>
+				<div style={{ paddingLeft: "1rem", paddingRight: "1rem", paddingBottom: "0.75rem", paddingTop: "0.25rem", display: "flex" }}>
 					<div style={{ width: "60%" }}>
 						<Title order={5} c={dark}>
 							Iterations
@@ -315,7 +315,7 @@ const UI = () => {
 					</div>
 				</div>
 				<div
-					style={{ paddingLeft: "1rem", paddingRight: "1rem", paddingTop: "0.75rem", paddingBottom: "2rem" }}
+					style={{ paddingLeft: "1rem", paddingRight: "1rem", paddingTop: "0.25rem", paddingBottom: "2rem" }}
 				>
 					{initialized && currentModel && switchConsole(currentModel, consoleLayoutType, consoleLayoutMode)}
 				</div>
@@ -325,21 +325,21 @@ const UI = () => {
 
 	const modelSelector = () => {
 		return (
-			<div style={{ width: "fit-content" }}>
+			<div style={{ width: "fit-content", paddingLeft: "1rem", paddingBottom: "0.75rem" }}>
 				<Stack gap={9}>
 					<SegmentedControl
 						value={currentModel.option}
 						onChange={handleModelSelection}
-						data={modelOptions}
+						data={isPortrait ? modelOptions.filter( m => m.label !== "SCHENCK") : modelOptions}
 						color={dark}
 						size="xs"
 						m={0}
 						p={0}
 						classNames={modelSelectorStyles}
 					/>
-					<Text size="sm" fw={500} c={softDark} ml="1vw">
+					{!isPortrait && <Text size="sm" fw={500} c={softDark} ml="1vw">
 						Choose a model...
-					</Text>
+					</Text>}
 				</Stack>
 			</div>
 		);
@@ -401,6 +401,7 @@ const UI = () => {
 						width: "100%",
 					}}
 				>
+					{isPortrait && modelSelector()}
 					{isLandscape && tracingControl()}
 				</div>
 			</div>
