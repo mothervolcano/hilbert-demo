@@ -325,7 +325,7 @@ const UI = () => {
 
 	const modelSelector = () => {
 		return (
-			<div style={{ width: "fit-content", paddingLeft: "1rem", paddingBottom: "0.75rem" }}>
+			<div style={{ width: "fit-content", paddingLeft: "1rem", paddingBottom: "1.25rem" }}>
 				<Stack gap={9}>
 					<SegmentedControl
 						value={currentModel.option}
