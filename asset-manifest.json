@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/hilbert-demo/static/css/main.567965cc.css",
-    "main.js": "/hilbert-demo/static/js/main.b48fa05b.js",
+    "main.js": "/hilbert-demo/static/js/main.191dfd6c.js",
     "index.html": "/hilbert-demo/index.html",
     "main.567965cc.css.map": "/hilbert-demo/static/css/main.567965cc.css.map",
-    "main.b48fa05b.js.map": "/hilbert-demo/static/js/main.b48fa05b.js.map"
+    "main.191dfd6c.js.map": "/hilbert-demo/static/js/main.191dfd6c.js.map"
   },
   "entrypoints": [
     "static/css/main.567965cc.css",
-    "static/js/main.b48fa05b.js"
+    "static/js/main.191dfd6c.js"
   ]
 }
