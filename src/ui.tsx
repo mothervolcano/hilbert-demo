@@ -36,7 +36,7 @@ const Layout = ({ orientation, children }: any) => {
 	if (orientation === "LANDSCAPE") {
 		return (
 			<Flex>
-				<div style={{ position: "relative", minWidth: "300px", maxWidth: "25%", overflowY: "auto" }}>{children[0]}</div>
+				<div style={{ position: "relative", minWidth: "300px", maxWidth: "20%", overflowY: "auto" }}>{children[0]}</div>
 				<div style={{ position: "relative", minWidth: "250px", flexGrow: "1" }}>{children[1]}</div>
 			</Flex>
 		);
@@ -292,7 +292,7 @@ const UI = () => {
 						<Title c={light}>Hilbert</Title>
 						<Space h="md" />
 						<Text size="sm" c={softLight}>
-							Project description goes here. It should be a brief succint text introducing the concept
+							A FASS curve generator based on Hilbert’s model.
 						</Text>
 						<Space h="sm" />
 					</Container>
