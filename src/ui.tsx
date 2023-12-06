@@ -350,7 +350,7 @@ const UI = () => {
 			<div
 				style={{
 					position: "absolute",
-					bottom: "3vh",
+					bottom: "5vh",
 					left: "3vw",
 					width: "100%",
 					paddingRight: "6vw",
