@@ -97,10 +97,10 @@ const UI = () => {
 
 	useEffect(() => {
 		if (!paperLoaded) {
-			console.log("PAPER HASN'T LOADED");
+			// console.log("PAPER HASN'T LOADED");
 			return () => {};
 		}
-		console.log("1 --> PAPERJS LOADED! CurrentModel: ", stageSize);
+		// console.log("1 --> PAPERJS LOADED! CurrentModel: ", stageSize);
 		setParamsForConsole(currentModel.params);
 		reset();
 		if (stageSize) {
@@ -118,7 +118,7 @@ const UI = () => {
 
 	useEffect(() => {
 		if (!paperLoaded) {
-			console.log("PAPER HASN'T LOADED");
+			// console.log("PAPER HASN'T LOADED");
 			return () => {};
 		}
 
@@ -128,7 +128,7 @@ const UI = () => {
 		} else if (currentModel) {
 			const params: ParamSet = parseParams(currentModel.params);
 
-			console.log(`2 --> REDRAWING for params change: `, params);
+			// console.log(`2 --> REDRAWING for params change: `, params);
 			if (stageSize) {
 				resize(stageSize);
 			}
@@ -143,11 +143,11 @@ const UI = () => {
 
 	useEffect(() => {
 		if (!paperLoaded) {
-			console.log("PAPER HASN'T LOADED");
+			// console.log("PAPER HASN'T LOADED");
 			return () => {};
 		}
 
-		console.log("2 --> REDRAWING for new selected Model");
+		// console.log("2 --> REDRAWING for new selected Model");
 
 		const params: ParamSet = parseParams(currentModel.params);
 		refresh();
@@ -160,11 +160,11 @@ const UI = () => {
 
 	useEffect(() => {
 		if (!paperLoaded) {
-			console.log("PAPER HASN'T LOADED");
+			// console.log("PAPER HASN'T LOADED");
 			return () => {};
 		}
 
-		console.log(`2 --> REDRAWING for ${iterations} iterations`);
+		// console.log(`2 --> REDRAWING for ${iterations} iterations`);
 
 		const params: ParamSet = parseParams(currentModel.params);
 		refresh();

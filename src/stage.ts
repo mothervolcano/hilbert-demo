@@ -33,8 +33,6 @@ function clipPath(path: any, mask: any) {
 function calculateOrigin(width: number, height: number) {
   const viewRatio = width/height;
 
-  console.log("view ratio: ", viewRatio )
-
   if (viewRatio <= 1 ) {
     return { x: width/2, y: height - height*0.48};
   }
