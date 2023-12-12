@@ -14,7 +14,7 @@ import {
 	Space,
 	Slider,
 	Flex,
-    rem,
+	rem,
 } from "@mantine/core";
 
 import modelSelectorStyles from "./styles/modelSelector.module.css";
@@ -28,6 +28,7 @@ import useModel from "./hooks/useModel";
 
 import PaperStage from "./components/paperStage";
 import { reset, initModel, generate, refresh, redraw, resize, retrace } from "./stage";
+import usePaperStage from "./hooks/usePaperStage";
 
 // --------------------------------------------------------------
 // LAYOUT COMPONENTS
@@ -36,7 +37,9 @@ const Layout = ({ orientation, children }: any) => {
 	if (orientation === "LANDSCAPE") {
 		return (
 			<Flex>
-				<div style={{ position: "relative", minWidth: "300px", maxWidth: "20%", overflowY: "auto" }}>{children[0]}</div>
+				<div style={{ position: "relative", minWidth: "300px", maxWidth: "20%", overflowY: "auto" }}>
+					{children[0]}
+				</div>
 				<div style={{ position: "relative", minWidth: "250px", flexGrow: "1" }}>{children[1]}</div>
 			</Flex>
 		);
@@ -46,7 +49,7 @@ const Layout = ({ orientation, children }: any) => {
 		return (
 			<Stack justify="flex-start" align="stretch">
 				<div style={{ position: "relative" }}>{children[1]}</div>
-				<div style={{ position: "relative", overflowY: "auto"}}>{children[0]}</div>
+				<div style={{ position: "relative", overflowY: "auto" }}>{children[0]}</div>
 			</Stack>
 		);
 	}
@@ -70,7 +73,6 @@ function parseParams(updatedParams: ParamSet) {
 // ---------------------------------------------------------------
 
 const UI = () => {
-	const [paperLoaded, setPaperLoaded] = useState<boolean>(false);
 	const [initialized, setInitialized] = useState<boolean>(false);
 
 	const [models, currentModel, setCurrentModel] = useModel();
@@ -92,32 +94,34 @@ const UI = () => {
 	// ----------------------------------------------------------------------------
 	// HOOKS
 
+	const [canvasRef, isPaperReady, paperScope] = usePaperStage();
+
 	// .............................................................................
 	// ACTION: the app is loaded
 
 	useEffect(() => {
-		if (!paperLoaded) {
-			// console.log("PAPER HASN'T LOADED");
+		if (!isPaperReady) {
+			console.log("PAPER HASN'T LOADED");
 			return () => {};
 		}
-		// console.log("1 --> PAPERJS LOADED! CurrentModel: ", stageSize);
+		console.log("1 --> PAPERJS LOADED! CurrentModel: ", stageSize);
 		setParamsForConsole(currentModel.params);
-		reset();
+		reset(paperScope);
 		if (stageSize) {
 			resize(stageSize);
 		}
-		initModel();
+		initModel(paperScope);
 
 		if (!initialized) {
 			setInitialized(true);
 		}
-	}, [paperLoaded, stageSize]);
+	}, [isPaperReady, stageSize]);
 
 	// .............................................................................
 	// ACTION: parameters are updated in the UI
 
 	useEffect(() => {
-		if (!paperLoaded) {
+		if (!isPaperReady) {
 			// console.log("PAPER HASN'T LOADED");
 			return () => {};
 		}
@@ -142,7 +146,7 @@ const UI = () => {
 	// ACTION: model change
 
 	useEffect(() => {
-		if (!paperLoaded) {
+		if (!isPaperReady) {
 			// console.log("PAPER HASN'T LOADED");
 			return () => {};
 		}
@@ -159,7 +163,7 @@ const UI = () => {
 	// ACTION: iteration number change
 
 	useEffect(() => {
-		if (!paperLoaded) {
+		if (!isPaperReady) {
 			// console.log("PAPER HASN'T LOADED");
 			return () => {};
 		}
@@ -171,6 +175,7 @@ const UI = () => {
 		generate(currentModel.model, iterations, params);
 		redraw(params);
 	}, [iterations]);
+
 
 	// .............................................................................
 	// ACTION: on browser window resize
@@ -286,7 +291,7 @@ const UI = () => {
 
 	const panel = () => {
 		return (
-			<div style={{ width: "100%"}}>
+			<div style={{ width: "100%" }}>
 				{isLandscape && (
 					<Container fluid w="100%" bg={dark} pt="sm" pb="md" mb="md" style={{ borderRadius: "8px 0 0 0" }}>
 						<Title c={light}>Hilbert</Title>
@@ -297,7 +302,15 @@ const UI = () => {
 						<Space h="sm" />
 					</Container>
 				)}
-				<div style={{ paddingLeft: "1rem", paddingRight: "1rem", paddingBottom: "0.75rem", paddingTop: "0.25rem", display: "flex" }}>
+				<div
+					style={{
+						paddingLeft: "1rem",
+						paddingRight: "1rem",
+						paddingBottom: "0.75rem",
+						paddingTop: "0.25rem",
+						display: "flex",
+					}}
+				>
 					<div style={{ width: "60%" }}>
 						<Title order={5} c={dark}>
 							Iterations
@@ -330,16 +343,18 @@ const UI = () => {
 					<SegmentedControl
 						value={currentModel.option}
 						onChange={handleModelSelection}
-						data={isPortrait ? modelOptions.filter( m => m.label !== "SCHENCK") : modelOptions}
+						data={isPortrait ? modelOptions.filter((m) => m.label !== "SCHENCK") : modelOptions}
 						color={dark}
 						size="xs"
 						m={0}
 						p={0}
 						classNames={modelSelectorStyles}
 					/>
-					{!isPortrait && <Text size="sm" fw={500} c={softDark} ml="1vw">
-						Choose a model...
-					</Text>}
+					{!isPortrait && (
+						<Text size="sm" fw={500} c={softDark} ml="1vw">
+							Choose a model...
+						</Text>
+					)}
 				</Stack>
 			</div>
 		);
@@ -381,7 +396,9 @@ const UI = () => {
 	const stage = () => {
 		return (
 			<div style={stageStyle}>
-				<PaperStage onPaperLoad={setPaperLoaded} onResize={setStageSize} />
+				<div style={{ width: "100%", height: "100%" }}>
+					<canvas style={{ position: "relative", width: "100%", height: "100%" }} ref={canvasRef}></canvas>
+				</div>
 				<div
 					style={{
 						position: "absolute",

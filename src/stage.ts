@@ -1,10 +1,11 @@
 import { Layer, Group, Path, Color } from "paper";
-import { paperScope } from "./components/paperStage";
 
 import { ICommand, IComposer, IModel } from "./lib/lsys/lsys";
 
 import Composer from "./lib/lsys/core/composer";
 import Turtle from "./lib/lsys/tools/turtle";
+
+// const paperScope = new PaperScope();
 
 let view: any;
 let maskLayer: any;
@@ -52,7 +53,7 @@ export function resize( { width, height}: {width:number; height:number}) {
   }
 }
 
-export function reset() {
+export function reset(paperScope: paper.PaperScope) {
   paperScope.project.clear();
 }
 
@@ -74,9 +75,9 @@ export function refresh() {
 // ----------------------------------------------------------------------------------------
 // Note: initializes the requested model and creates a state and or context that is used by the other methods: generate, regenerate and redraw;
 
-export function initModel(clipPathData?: string) {
+export function initModel(paperScope: paper.PaperScope, clipPathData?: string) {
   // ....
-  view = paperScope.project.view;
+  view = paperScope.view;
 
   origin = calculateOrigin(view.size.width, view.size.height);
 
