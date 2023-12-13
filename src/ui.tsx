@@ -99,30 +99,35 @@ const UI = () => {
 	// .............................................................................
 	// ACTION: the app is loaded
 
-	useEffect(() => {
-		if (!isPaperReady) {
-			console.log("PAPER HASN'T LOADED");
-			return () => {};
-		}
-		console.log("1 --> PAPERJS LOADED! CurrentModel: ", stageSize);
-		setParamsForConsole(currentModel.params);
-		reset(paperScope);
-		if (stageSize) {
-			resize(stageSize);
-		}
-		initModel(paperScope);
+	// useEffect(() => {
+		
+	// 	console.log("1 --> PAPERJS LOADED! canvasRef: ", canvasRef);
+		
+	// 	if (!isPaperReady) {
+	// 		console.log("PAPER HASN'T LOADED");
+	// 		return () => {};
+	// 	}
+	// 	setParamsForConsole(currentModel.params);
+	// 	reset(paperScope);
+	// 	if (stageSize) {
+	// 		resize(stageSize);
+	// 	}
+	// 	initModel(paperScope);
 
-		if (!initialized) {
-			setInitialized(true);
-		}
-	}, [isPaperReady, stageSize]);
+	// 	if (!initialized) {
+	// 		setInitialized(true);
+	// 	}
+	// }, [isPaperReady, stageSize]);
 
 	// .............................................................................
 	// ACTION: parameters are updated in the UI
 
 	useEffect(() => {
+		
+		console.log("2 --> PARAMS INPUT RECEIVED! canvasRef: ", canvasRef);
+
 		if (!isPaperReady) {
-			// console.log("PAPER HASN'T LOADED");
+			console.log("PAPER HASN'T LOADED");
 			return () => {};
 		}
 
@@ -133,12 +138,12 @@ const UI = () => {
 			const params: ParamSet = parseParams(currentModel.params);
 
 			// console.log(`2 --> REDRAWING for params change: `, params);
-			if (stageSize) {
-				resize(stageSize);
-			}
-			refresh();
-			generate(currentModel.model, iterations, params);
-			redraw(params);
+			// if (stageSize) {
+			// 	resize(stageSize);
+			// }
+			// refresh();
+			// generate(currentModel.model, iterations, params);
+			// redraw(params);
 		}
 	}, [paramsForConsole, stageSize]);
 
@@ -146,34 +151,40 @@ const UI = () => {
 	// ACTION: model change
 
 	useEffect(() => {
+
+		console.log("3 --> NEW MODEL SELECTED! canvasRef: ", canvasRef);
+
 		if (!isPaperReady) {
-			// console.log("PAPER HASN'T LOADED");
+			console.log("PAPER HASN'T LOADED");
 			return () => {};
 		}
 
 		// console.log("2 --> REDRAWING for new selected Model");
 
 		const params: ParamSet = parseParams(currentModel.params);
-		refresh();
-		generate(currentModel.model, iterations, params);
-		redraw(params);
+		// refresh();
+		// generate(currentModel.model, iterations, params);
+		// redraw(params);
 	}, [currentModel]);
 
 	// .............................................................................
 	// ACTION: iteration number change
 
 	useEffect(() => {
+
+		console.log("4 --> ITERATION INPUT RECEIVED! canvasRef: ", canvasRef);
+
 		if (!isPaperReady) {
-			// console.log("PAPER HASN'T LOADED");
+			console.log("PAPER HASN'T LOADED");
 			return () => {};
 		}
 
 		// console.log(`2 --> REDRAWING for ${iterations} iterations`);
 
 		const params: ParamSet = parseParams(currentModel.params);
-		refresh();
-		generate(currentModel.model, iterations, params);
-		redraw(params);
+		// refresh();
+		// generate(currentModel.model, iterations, params);
+		// redraw(params);
 	}, [iterations]);
 
 
