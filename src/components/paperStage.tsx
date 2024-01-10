@@ -1,56 +1,56 @@
-import { useRef, useEffect, useLayoutEffect, useState } from "react";
+import { useRef, useEffect, ReactNode } from "react";
 
-import useResizeObserver from "@react-hook/resize-observer";
+import useSize from "../hooks/useSize";
+import usePaperScope from "../hooks/usePaperScope";
 
-import { PaperScope } from "paper";
+interface StageProps {
+	style: object;
+	onResize: Function;
+	onReady: Function;
+	children: ReactNode;
+}
 
-export const paperScope = new PaperScope();
+const PaperStage = ({ style, onResize, onReady, children }: StageProps) => {
+	const stageRef = useRef(null);
+	const stageSize = useSize(stageRef);
+	const [canvasRef, paperScope] = usePaperScope();
 
-const useSize = (target: any): any => {
-	const [size, setSize] = useState();
+	// console.log("Rendering Stage: ", canvasSize);
 
-	useLayoutEffect(() => {
-		setSize(target.current.getBoundingClientRect());
-	}, [target]);
-
-	useResizeObserver(target, (entry: any) => setSize(entry.contentRect));
-
-	return size;
-};
-
-const PaperStage = ({ onPaperLoad, onResize }: any) => {
-	// ...
-	const containerRef = useRef<HTMLDivElement>(null);
-	const canvasRef = useRef<HTMLCanvasElement>(null);
-	const size = useSize(containerRef);
-
+	/**
+	 * Execute the callback to initialize the drawing
+	 * */
 	useEffect(() => {
-		if (canvasRef.current !== null) {
-			paperScope.install(window);
-			paperScope.setup(canvasRef.current);
-			onPaperLoad(true);
-		} else {
-			//TODO: error message
+		console.log("onReady: ", paperScope?.view);
+		onReady(paperScope);
+	}, [canvasRef.current]);
+
+	/**
+	 * Execute the callback to redraw/adjust to the updated canvas size
+	 * */
+	useEffect(() => {
+		if (canvasRef.current && stageSize) {
+			paperScope.view.viewSize.width = stageSize.width;
+			paperScope.view.viewSize.height = stageSize.height;
+			onResize(paperScope.view);
 		}
-	}, []);
+	}, [stageSize]);
 
+	const canvasWidth = stageSize ? `${stageSize.width}px` : "100%";
+	const canvasHeight = stageSize ? `${stageSize.height}px` : "100%";
 
-	useEffect(() => {
-	    // Update canvas size based on parent size
-	    if (canvasRef.current && size) {
-	        canvasRef.current.width = size.width;
-	        canvasRef.current.height = size.height;
-	        onResize({width: size.width, height: size.height});
-	    }
-	}, [size]);
-
-	// const canvasWidth = size ? `${size.width}px` : "100%";
-	// const canvasHeight = size ? `${size.height}px` : "100%";
+	// const canvasWidth = "100%";
+	// const canvasHeight = "100%";
 
 	return (
-		<div ref={containerRef} style={{  width: "100%", height: "100%"}} >
-			<canvas ref={canvasRef} style={{ position: "relative", width: "100%", height: "100%" }}>
-			</canvas>
+		<div style={style}>
+			<div ref={stageRef} style={{ width: "100%", height: "100%" }}>
+				<canvas
+					ref={canvasRef}
+					style={{ position: "relative", width: canvasWidth, height: canvasHeight }}
+				></canvas>
+			</div>
+			{children}
 		</div>
 	);
 };

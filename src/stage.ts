@@ -46,11 +46,8 @@ function calculateOrigin(width: number, height: number) {
 //
 
 
-export function resize( { width, height}: {width:number; height:number}) {
-  if (view) {
-    view.viewSize = [width, height];
-    origin = calculateOrigin(width, height);
-  }
+export function resize() {
+  // to be implemented
 }
 
 export function reset(paperScope: paper.PaperScope) {
@@ -142,39 +139,43 @@ export function generate(model: IModel, iterations: number, params: any) {
 // Note: modifies the model based on user or external input;
 
 export function redraw(params: any) {
-  const { interspaceCtrl, p3Ctrl, p4Ctrl } = params;
 
-  fassPath = new Path({
-    strokeColor: "black",
-    strokeWidth: 1 + 5 * p3Ctrl,
-    visible: !DEBUG_MODE,
-    // closed: true,
-    // fillColor: 'turquoise'
-  });
+  if ( sequence ) {
 
-  fassLayer.addChild(fassPath);
+    const { interspaceCtrl, p3Ctrl, p4Ctrl } = params;
 
-  const context = {
-    path: fassPath,
-    scale: scaleFactor,
-    interspace: interspaceCtrl * 0.75,
-    p3: p3Ctrl,
-    p4: p4Ctrl,
-  };
+    fassPath = new Path({
+      strokeColor: "black",
+      strokeWidth: 1 + 5 * p3Ctrl,
+      visible: !DEBUG_MODE,
+      // closed: true,
+      // fillColor: 'turquoise'
+    });
 
-  for (const command of sequence) {
-    command.run(pen, context);
+    fassLayer.addChild(fassPath);
+
+    const context = {
+      path: fassPath,
+      scale: scaleFactor,
+      interspace: interspaceCtrl * 0.75,
+      p3: p3Ctrl,
+      p4: p4Ctrl,
+    };
+
+    for (const command of sequence) {
+      command.run(pen, context);
+    }
+
+    // clipPath(fassPath, pathMask);
+
+    fassPath.scale(view.size.height/fassPath.bounds.height*0.60)
+
+    const stageCenter = calculateOrigin(view.size.width, view.size.height);
+
+    maskLayer.position = stageCenter;
+    fassLayer.position = stageCenter;
+    layer.position = stageCenter;
   }
-
-  // clipPath(fassPath, pathMask);
-
-  fassPath.scale(view.size.height/fassPath.bounds.height*0.60)
-
-  const stageCenter = calculateOrigin(view.size.width, view.size.height);
-
-  maskLayer.position = stageCenter;
-  fassLayer.position = stageCenter;
-  layer.position = stageCenter;
 }
 
 // ----------------------------------------------------------------------------------------
